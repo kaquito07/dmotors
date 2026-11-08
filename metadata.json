@@ -1,0 +1,6 @@
+{
+  "name": "Dmotors - Vitrine Premium & Painel de Gestão",
+  "description": "Plataforma integrada da Dmotors (@_dmotors): Vitrine de veículos premium e seminovos com simulador e agendamento, unificada ao Painel Administrativo de Gestão de Estoque, BI e Vendas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
