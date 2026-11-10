@@ -1,5 +1,7 @@
 import React from 'react';
-import { Car, Instagram, PhoneCall, Mail, MapPin, Clock, ShieldCheck } from 'lucide-react';
+import { Instagram, Youtube, PhoneCall, Mail, MapPin, Clock, ShieldCheck } from 'lucide-react';
+import { GoldShield } from '../common/GoldShield';
+import { CONTACT_INFO, getWhatsAppUrl } from '../../config/contact';
 
 export const Footer: React.FC = () => {
   return (
@@ -8,89 +10,108 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           {/* Brand Col */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center text-white">
-                <Car className="w-5 h-5" />
+            <div className="flex items-center gap-2.5">
+              <GoldShield size={28} />
+              <div className="flex flex-col">
+                <span className="text-lg font-black text-white tracking-wider uppercase leading-none">
+                  D<span className="text-amber-400">'MOTORS</span>
+                </span>
+                <span className="text-[9px] uppercase tracking-widest text-amber-400/80 font-medium">
+                  {CONTACT_INFO.cityState}
+                </span>
               </div>
-              <span className="text-lg font-black text-white tracking-wider uppercase">
-                D<span className="text-red-500">MOTORS</span>
-              </span>
             </div>
             <p className="text-zinc-500 leading-relaxed text-[11px]">
-              Especialistas na intermediação e venda de veículos seminovos de procedência inquestionável. Atendimento exclusivo com hora marcada.
+              {CONTACT_INFO.slogan} Atendimento presencial e online com as melhores condições e taxas do mercado.
             </p>
             <div className="flex items-center gap-3 pt-1">
               <a
-                href="https://instagram.com/_dmotors"
+                href={CONTACT_INFO.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-pink-400 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-pink-400 flex items-center justify-center transition-colors border border-zinc-800"
                 title="Instagram @_dmotors"
               >
                 <Instagram className="w-4 h-4" />
               </a>
               <a
-                href={`https://wa.me/5511999998888`}
+                href={CONTACT_INFO.youtubeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-emerald-400 flex items-center justify-center transition-colors"
-                title="WhatsApp Dmotors"
+                className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-red-400 flex items-center justify-center transition-colors border border-zinc-800"
+                title="YouTube @_dmotors"
+              >
+                <Youtube className="w-4 h-4" />
+              </a>
+              <a
+                href={getWhatsAppUrl('Olá D\'MOTORS! Gostaria de mais informações sobre o estoque.')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 flex items-center justify-center transition-colors border border-emerald-800/40"
+                title="WhatsApp D'MOTORS"
               >
                 <PhoneCall className="w-4 h-4" />
               </a>
             </div>
           </div>
 
-          {/* Showroom & Hours */}
+          {/* Showroom & Location */}
           <div className="space-y-2">
-            <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-2">Showroom Guarulhos</h4>
+            <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-2">Localização</h4>
             <div className="flex items-start gap-2 text-[11px] text-zinc-400">
-              <MapPin className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-              <span>Av. Paulo Faccini, 32 - Macedo, Guarulhos - SP, 07111-000</span>
+              <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <span>{CONTACT_INFO.cityState} · Atendimento com agendamento</span>
             </div>
             <div className="flex items-start gap-2 text-[11px] text-zinc-400">
               <Clock className="w-4 h-4 text-zinc-500 shrink-0 mt-0.5" />
               <div>
                 <p>Segunda a Sexta: 09h às 19h</p>
-                <p>Sábados: 09h às 17h</p>
+                <p>Sábados: 09h às 16h</p>
               </div>
             </div>
           </div>
 
           {/* Contacts */}
           <div className="space-y-2">
-            <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-2">Atendimento Direto</h4>
+            <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-2">Canais Oficiais</h4>
             <div className="flex items-center gap-2 text-[11px]">
               <PhoneCall className="w-3.5 h-3.5 text-emerald-400" />
-              <span>(11) 99999-8888 (WhatsApp Showroom)</span>
+              <a
+                href={getWhatsAppUrl()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-emerald-300 transition-colors"
+              >
+                {CONTACT_INFO.whatsappFormatted} (WhatsApp)
+              </a>
             </div>
             <div className="flex items-center gap-2 text-[11px]">
               <Mail className="w-3.5 h-3.5 text-zinc-400" />
-              <span>contato@dmotors.com.br</span>
+              <span>{CONTACT_INFO.email}</span>
             </div>
             <div className="flex items-center gap-2 text-[11px]">
               <Instagram className="w-3.5 h-3.5 text-pink-400" />
               <a
-                href="https://instagram.com/_dmotors"
+                href={CONTACT_INFO.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-zinc-200 transition-colors"
               >
-                @_dmotors (Instagram Oficial)
+                {CONTACT_INFO.instagramHandle} (Instagram Oficial)
               </a>
             </div>
           </div>
 
-          {/* Seals and Security */}
+          {/* Quality & Transparency */}
           <div className="space-y-2">
-            <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-2">Garantia e Procedência</h4>
+            <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-2">Procedência</h4>
             <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800 space-y-1.5 text-[11px]">
-              <div className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+              <div className="flex items-center gap-1.5 text-amber-400 font-semibold">
                 <ShieldCheck className="w-4 h-4" />
-                <span>Laudo Cautelar Dekra</span>
+                <span>Veículos com Histórico Verificado</span>
               </div>
               <p className="text-zinc-500 text-[10px]">
-                Nenhum veículo comercializado possui histórico de leilão, sinistro ou alteração de hodômetro.
+                Transparência completa em cada negociação, quilometragem real e suporte durante todo o processo.
               </p>
             </div>
           </div>
@@ -98,13 +119,20 @@ export const Footer: React.FC = () => {
 
         {/* Bottom copyright */}
         <div className="pt-6 border-t border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-zinc-600">
-          <p>© {new Date().getFullYear()} Dmotors Veículos Premium. Todos os direitos reservados.</p>
+          <p>© {new Date().getFullYear()} D'MOTORS · {CONTACT_INFO.cityState}. Todos os direitos reservados.</p>
           <div className="flex items-center gap-4">
             <span className="hover:text-zinc-400 cursor-pointer">Termos de Uso</span>
             <span>·</span>
             <span className="hover:text-zinc-400 cursor-pointer">Privacidade</span>
             <span>·</span>
-            <span className="hover:text-zinc-400 cursor-pointer">Certificado Cautelar</span>
+            <a
+              href={CONTACT_INFO.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-zinc-400 cursor-pointer"
+            >
+              Instagram @_dmotors
+            </a>
           </div>
         </div>
       </div>

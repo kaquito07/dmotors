@@ -1,5 +1,8 @@
+export type VehicleType = 'carro' | 'moto';
+
 export interface Vehicle {
   id: string;
+  type: VehicleType; // 'carro' | 'moto'
   brand: string;
   model: string;
   version: string;
@@ -13,26 +16,28 @@ export interface Vehicle {
   ownershipType: 'proprio' | 'consignado';
   isOpportunity: boolean;
   opportunityDiscount?: number;
-  mileage: number; // in km
+  isIllustrativePrice?: boolean; // Selo "Preço ilustrativo"
+  mileage: number; // in km - SEMPRE em destaque
   color: string;
   transmission: 'Automático' | 'Manual' | 'CVT' | 'Dupla Embreagem';
   fuel: 'Gasolina' | 'Flex' | 'Híbrido' | 'Diesel' | 'Elétrico';
-  bodyType: 'Sedan' | 'SUV' | 'Hatchback' | 'Coupe' | 'Pickup';
+  bodyType: 'Sedan' | 'SUV' | 'Hatchback' | 'Coupe' | 'Pickup' | 'Moto';
   plateEnd: string;
-  doors: number;
+  doors?: number; // Only for cars
+  trunkCapacityLiters?: number; // Only for cars
   engine: string;
   powerCv: number;
-  torqueKgfm: number;
-  cityConsumption: number; // km/l
-  roadConsumption: number; // km/l
+  torqueKgfm?: number;
+  cityConsumption?: number; // km/l
+  roadConsumption?: number; // km/l
   features: string[];
   entryDate: string; // YYYY-MM-DD
   soldDate?: string; // YYYY-MM-DD
   buyerName?: string;
   saleChannel?: 'Instagram @_dmotors' | 'Loja Física' | 'Webmotors' | 'Indicação' | 'WhatsApp Direto';
   images: string[];
-  inspectionApproved: boolean;
-  warrantyMonths: number;
+  inspectionApproved?: boolean;
+  warrantyMonths?: number;
   location: string;
   description?: string;
 }
@@ -61,9 +66,10 @@ export interface LeadProposal {
 
 export interface BrandModelOption {
   brand: string;
+  type: VehicleType;
   models: {
     name: string;
-    bodyType: 'Sedan' | 'SUV' | 'Hatchback' | 'Coupe' | 'Pickup';
+    bodyType: 'Sedan' | 'SUV' | 'Hatchback' | 'Coupe' | 'Pickup' | 'Moto';
     defaultEngine: string;
     defaultPower: number;
     defaultTransmission: 'Automático' | 'Manual' | 'CVT' | 'Dupla Embreagem';

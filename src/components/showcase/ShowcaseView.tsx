@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { Vehicle, LeadProposal } from '../../types/vehicle';
-import { BRAND_MODELS_CATALOG } from '../../data/mockVehicles';
 import { HeroSection } from './HeroSection';
 import { OpportunityCarousel } from './OpportunityCarousel';
 import { FilterBar, SortOption } from './FilterBar';
 import { VehicleCard } from './VehicleCard';
+import { RecentlySoldSection } from './RecentlySoldSection';
 import { VehicleDetailModal } from './VehicleDetailModal';
 import { SellYourCarModal } from './SellYourCarModal';
 import { AboutDmotors } from './AboutDmotors';
@@ -29,13 +29,14 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
 
   // Filter States
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedType, setSelectedType] = useState('all'); // 'all' | 'carro' | 'moto'
   const [selectedBrand, setSelectedBrand] = useState('all');
   const [selectedModel, setSelectedModel] = useState('all');
   const [selectedBodyType, setSelectedBodyType] = useState('all');
   const [selectedTransmission, setSelectedTransmission] = useState('all');
   const [onlyOpportunities, setOnlyOpportunities] = useState(false);
   const [minPrice, setMinPrice] = useState<number>(0);
-  const [maxPrice, setMaxPrice] = useState<number>(500000);
+  const [maxPrice, setMaxPrice] = useState<number>(1000000);
   const [minYear, setMinYear] = useState<number>(0);
   const [sortBy, setSortBy] = useState<SortOption>('price_desc');
   const [activeQuickFilter, setActiveQuickFilter] = useState<string | null>(null);
@@ -47,17 +48,24 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
     return vehicles.filter((v) => v.status === 'available');
   }, [vehicles]);
 
+  // Recently sold vehicles
+  const soldVehicles = useMemo(() => {
+    return vehicles.filter((v) => v.status === 'sold');
+  }, [vehicles]);
+
   // Opportunities
   const opportunityVehicles = useMemo(() => {
     return availableVehicles.filter((v) => v.isOpportunity);
   }, [availableVehicles]);
 
-  // Available Brands list
+  // Available Brands list (filtered by selectedType if set)
   const availableBrands = useMemo(() => {
     const brandSet = new Set<string>();
-    availableVehicles.forEach((v) => brandSet.add(v.brand));
+    availableVehicles
+      .filter((v) => (selectedType === 'all' ? true : (v.type || 'carro') === selectedType))
+      .forEach((v) => brandSet.add(v.brand));
     return Array.from(brandSet).sort();
-  }, [availableVehicles]);
+  }, [availableVehicles, selectedType]);
 
   // Chained Models list based strictly on current available inventory
   const availableModels = useMemo(() => {
@@ -65,16 +73,26 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
       return [];
     }
     const modelSet = new Set<string>();
-    // From current inventory only, so customers never hit an empty result
     availableVehicles
-      .filter((v) => v.brand === selectedBrand)
+      .filter((v) => {
+        const matchesBrand = v.brand === selectedBrand;
+        const matchesType = selectedType === 'all' ? true : (v.type || 'carro') === selectedType;
+        return matchesBrand && matchesType;
+      })
       .forEach((v) => modelSet.add(v.model));
 
     return Array.from(modelSet).sort();
-  }, [availableVehicles, selectedBrand]);
+  }, [availableVehicles, selectedBrand, selectedType]);
 
   const handleBrandChange = (brand: string) => {
     setSelectedBrand(brand);
+    setSelectedModel('all');
+    setActiveQuickFilter(null);
+  };
+
+  const handleTypeChange = (type: string) => {
+    setSelectedType(type);
+    setSelectedBrand('all');
     setSelectedModel('all');
     setActiveQuickFilter(null);
   };
@@ -96,6 +114,12 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
     setSelectedBrand('all');
     setSelectedModel('all');
     setSelectedTransmission('all');
+    setSelectedBodyType('all');
+    setSelectedType('all');
+    setOnlyOpportunities(false);
+    setMinPrice(0);
+    setMaxPrice(1000000);
+    setMinYear(0);
 
     setActiveQuickFilter(chipId);
 
@@ -103,59 +127,32 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
     switch (chipId) {
       case 'opportunities':
         setOnlyOpportunities(true);
-        setSelectedBodyType('all');
-        setMinPrice(0);
-        setMaxPrice(500000);
-        setMinYear(0);
+        break;
+      case 'carros':
+        setSelectedType('carro');
+        break;
+      case 'motos':
+        setSelectedType('moto');
         break;
       case 'suv':
         setSelectedBodyType('SUV');
-        setOnlyOpportunities(false);
-        setMinPrice(0);
-        setMaxPrice(500000);
-        setMinYear(0);
+        setSelectedType('carro');
         break;
       case 'sedan':
         setSelectedBodyType('Sedan');
-        setOnlyOpportunities(false);
+        setSelectedType('carro');
+        break;
+      case 'price_50':
         setMinPrice(0);
-        setMaxPrice(500000);
-        setMinYear(0);
+        setMaxPrice(50000);
         break;
-      case 'hatchback':
-        setSelectedBodyType('Hatchback');
-        setOnlyOpportunities(false);
-        setMinPrice(0);
-        setMaxPrice(500000);
-        setMinYear(0);
+      case 'price_50_100':
+        setMinPrice(50000);
+        setMaxPrice(100000);
         break;
-      case 'price_120':
-        setSelectedBodyType('all');
-        setMinPrice(0);
-        setMaxPrice(120000);
-        setOnlyOpportunities(false);
-        setMinYear(0);
-        break;
-      case 'price_120_180':
-        setSelectedBodyType('all');
-        setMinPrice(120000);
-        setMaxPrice(180000);
-        setOnlyOpportunities(false);
-        setMinYear(0);
-        break;
-      case 'price_180_plus':
-        setSelectedBodyType('all');
-        setMinPrice(180000);
+      case 'price_100_plus':
+        setMinPrice(100000);
         setMaxPrice(1000000);
-        setOnlyOpportunities(false);
-        setMinYear(0);
-        break;
-      case 'year_2022':
-        setSelectedBodyType('all');
-        setMinYear(2022);
-        setOnlyOpportunities(false);
-        setMinPrice(0);
-        setMaxPrice(500000);
         break;
       default:
         break;
@@ -168,6 +165,12 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
   const filteredVehicles = useMemo(() => {
     return availableVehicles
       .filter((car) => {
+        // Vehicle Type (Carro / Moto)
+        const carType = car.type || 'carro';
+        if (selectedType !== 'all' && carType !== selectedType) {
+          return false;
+        }
+
         // Search term
         if (searchTerm.trim()) {
           const term = searchTerm.toLowerCase();
@@ -222,6 +225,7 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
       });
   }, [
     availableVehicles,
+    selectedType,
     searchTerm,
     selectedBrand,
     selectedModel,
@@ -236,25 +240,27 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
 
   const hasActiveFilters =
     searchTerm !== '' ||
+    selectedType !== 'all' ||
     selectedBrand !== 'all' ||
     selectedModel !== 'all' ||
     selectedBodyType !== 'all' ||
     selectedTransmission !== 'all' ||
     onlyOpportunities ||
     minPrice > 0 ||
-    maxPrice < 500000 ||
+    maxPrice < 1000000 ||
     minYear > 0 ||
     activeQuickFilter !== null;
 
   const handleResetFilters = () => {
     setSearchTerm('');
+    setSelectedType('all');
     setSelectedBrand('all');
     setSelectedModel('all');
     setSelectedBodyType('all');
     setSelectedTransmission('all');
     setOnlyOpportunities(false);
     setMinPrice(0);
-    setMaxPrice(500000);
+    setMaxPrice(1000000);
     setMinYear(0);
     setActiveQuickFilter(null);
   };
@@ -274,10 +280,10 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
         selectedModel={selectedModel}
         onModelChange={setSelectedModel}
         availableModels={availableModels}
+        selectedType={selectedType}
+        onTypeChange={handleTypeChange}
         selectedBodyType={selectedBodyType}
         onBodyTypeChange={setSelectedBodyType}
-        maxPrice={maxPrice}
-        onMaxPriceChange={setMaxPrice}
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         onExploreClick={scrollToCatalog}
@@ -286,7 +292,7 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
         activeQuickFilter={activeQuickFilter || undefined}
       />
 
-      {/* 2. Spotlight: Oportunidades da Semana Dmotors */}
+      {/* 2. Spotlight: Oportunidades da Semana D'MOTORS */}
       {opportunityVehicles.length > 0 && (
         <OpportunityCarousel
           opportunities={opportunityVehicles}
@@ -300,7 +306,7 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-3">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-red-500 mb-1">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-400 mb-1">
               <Car className="w-4 h-4" />
               Estoque Oficial @_dmotors
             </div>
@@ -308,13 +314,15 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
               Todos os Veículos no Showroom
             </h2>
             <p className="text-xs sm:text-sm text-zinc-400 mt-1">
-              Todos os modelos revisados, higienizados e prontos para entrega imediata em Guarulhos e em todo o Brasil.
+              Carros e motos revisados, higienizados e prontos para entrega imediata em Guarulhos e região.
             </p>
           </div>
         </div>
 
         {/* Dynamic Filter Bar */}
         <FilterBar
+          selectedType={selectedType}
+          onTypeChange={handleTypeChange}
           selectedBrand={selectedBrand}
           onBrandChange={handleBrandChange}
           brands={availableBrands}
@@ -357,7 +365,7 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
             </p>
             <button
               onClick={handleResetFilters}
-              className="px-4 py-2 text-xs font-semibold rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white transition-colors cursor-pointer"
+              className="px-4 py-2 text-xs font-semibold rounded-xl bg-amber-500 hover:bg-amber-400 text-black transition-colors cursor-pointer font-bold"
             >
               Restaurar Todos os Filtros
             </button>
@@ -365,23 +373,23 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
         )}
 
         {/* Sell / Trade Banner CTA */}
-        <div className="mt-16 bg-gradient-to-r from-zinc-900 via-zinc-900 to-red-950/40 border border-zinc-800 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+        <div className="mt-16 bg-gradient-to-r from-zinc-900 via-zinc-900 to-amber-950/30 border border-amber-500/30 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
           <div className="space-y-2 text-center md:text-left">
             <span className="text-xs uppercase font-extrabold tracking-wider text-amber-400 flex items-center gap-1.5 justify-center md:justify-start">
               <Sparkles className="w-4 h-4" />
-              Quer Vender ou Trocar seu Carro?
+              Quer Vender ou Trocar seu Carro ou Moto?
             </span>
             <h3 className="text-xl sm:text-2xl font-black text-white">
-              A Dmotors compra seu veículo ou aceita como parte de pagamento.
+              A D'MOTORS compra seu veículo ou aceita como entrada na troca.
             </h3>
             <p className="text-xs text-zinc-400 max-w-xl">
-              Avaliação transparente baseada no mercado real. Pagamento via TED na hora em nossa loja em Guarulhos após conferência de laudo.
+              Avaliação ágil baseada nas condições reais do mercado. Pagamento seguro e sem burocracia na unidade de Guarulhos.
             </p>
           </div>
 
           <button
             onClick={() => setIsSellModalOpen(true)}
-            className="shrink-0 px-6 py-3.5 rounded-xl font-bold text-xs bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-950 transition-all flex items-center gap-2 cursor-pointer"
+            className="shrink-0 px-6 py-3.5 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black shadow-lg shadow-amber-950/60 transition-all flex items-center gap-2 cursor-pointer"
           >
             <Car className="w-4 h-4" />
             Solicitar Avaliação Grátis
@@ -389,10 +397,13 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
         </div>
       </main>
 
-      {/* 4. About Dmotors & Testimonials */}
+      {/* 4. Recently Sold Section */}
+      <RecentlySoldSection soldVehicles={soldVehicles} />
+
+      {/* 5. About D'MOTORS & Reviews */}
       <AboutDmotors />
 
-      {/* 5. Footer */}
+      {/* 6. Footer */}
       <Footer />
 
       {/* Modals */}

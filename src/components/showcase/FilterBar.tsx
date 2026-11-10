@@ -4,6 +4,8 @@ import { SlidersHorizontal, Flame, RotateCcw, ArrowUpDown, ChevronDown, ChevronU
 export type SortOption = 'price_asc' | 'price_desc' | 'km_asc' | 'year_desc';
 
 interface FilterBarProps {
+  selectedType: string;
+  onTypeChange: (type: string) => void;
   selectedBrand: string;
   onBrandChange: (brand: string) => void;
   brands: string[];
@@ -24,6 +26,8 @@ interface FilterBarProps {
 }
 
 export const FilterBar: React.FC<FilterBarProps> = ({
+  selectedType,
+  onTypeChange,
   selectedBrand,
   onBrandChange,
   brands,
@@ -47,6 +51,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
   // Calculate count of active specific filters
   let activeFilterCount = 0;
+  if (selectedType !== 'all') activeFilterCount++;
   if (selectedBrand !== 'all') activeFilterCount++;
   if (selectedModel !== 'all') activeFilterCount++;
   if (selectedBodyType !== 'all') activeFilterCount++;
@@ -61,7 +66,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           <span className="text-xs font-bold text-white uppercase tracking-wider">
             Estoque
           </span>
-          <span className="text-[11px] font-mono text-zinc-400 bg-zinc-800 px-2 py-0.5 rounded-full">
+          <span className="text-[11px] font-mono text-amber-300 bg-amber-950/60 border border-amber-600/40 px-2 py-0.5 rounded-full">
             {totalFiltered}
           </span>
         </div>
@@ -72,12 +77,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             onClick={() => onToggleOpportunities(!onlyOpportunities)}
             className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer ${
               onlyOpportunities
-                ? 'bg-red-600 text-white border-red-500 shadow-md shadow-red-950'
+                ? 'bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-950'
                 : 'bg-zinc-950 text-zinc-400 hover:text-white border-zinc-800'
             }`}
           >
-            <Flame className={`w-3 h-3 ${onlyOpportunities ? 'fill-white' : 'text-red-500'}`} />
-            <span>Promo</span>
+            <Flame className={`w-3 h-3 ${onlyOpportunities ? 'fill-black text-black' : 'text-amber-400'}`} />
+            <span>Destaques</span>
           </button>
 
           {/* Compact Sort Selector on mobile */}
@@ -86,7 +91,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               aria-label="Ordenar veículos"
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value as SortOption)}
-              className="bg-zinc-950 border border-zinc-800 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-red-500 cursor-pointer max-w-[105px] truncate"
+              className="bg-zinc-950 border border-zinc-800 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer max-w-[105px] truncate"
             >
               <option value="price_desc">↓ Preço</option>
               <option value="price_asc">↑ Preço</option>
@@ -100,14 +105,14 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             onClick={() => setIsMobileExpanded(!isMobileExpanded)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer ${
               isMobileExpanded || activeFilterCount > 0
-                ? 'bg-zinc-800 text-white border-zinc-700 shadow-sm'
+                ? 'bg-zinc-800 text-amber-300 border-amber-500/50 shadow-sm'
                 : 'bg-zinc-950 text-zinc-300 hover:text-white border-zinc-800'
             }`}
           >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-red-500" />
+            <SlidersHorizontal className="w-3.5 h-3.5 text-amber-400" />
             <span>Filtros</span>
             {activeFilterCount > 0 && (
-              <span className="w-4 h-4 rounded-full bg-red-600 text-[10px] font-mono text-white flex items-center justify-center font-bold">
+              <span className="w-4 h-4 rounded-full bg-amber-500 text-[10px] font-mono text-black flex items-center justify-center font-bold">
                 {activeFilterCount}
               </span>
             )}
@@ -123,12 +128,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       {/* Desktop Top Row (>= 640px) */}
       <div className="hidden sm:flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800/80 pb-3">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-red-500" />
+          <SlidersHorizontal className="w-4 h-4 text-amber-400" />
           <span className="text-xs font-bold text-white uppercase tracking-wider">
             Filtros do Catálogo
           </span>
-          <span className="text-xs font-mono text-zinc-400 bg-zinc-800 px-2 py-0.5 rounded-full">
-            {totalFiltered} veículos
+          <span className="text-xs font-mono text-amber-300 bg-amber-950/60 border border-amber-600/40 px-2.5 py-0.5 rounded-full">
+            {totalFiltered} disponíveis
           </span>
         </div>
 
@@ -138,11 +143,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             onClick={() => onToggleOpportunities(!onlyOpportunities)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
               onlyOpportunities
-                ? 'bg-red-600 text-white border-red-500 shadow-md shadow-red-950'
+                ? 'bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-950'
                 : 'bg-zinc-950 text-zinc-400 hover:text-white border-zinc-800'
             }`}
           >
-            <Flame className={`w-3.5 h-3.5 ${onlyOpportunities ? 'fill-white' : 'text-red-500'}`} />
+            <Flame className={`w-3.5 h-3.5 ${onlyOpportunities ? 'fill-black text-black' : 'text-amber-400'}`} />
             Apenas Oportunidades
           </button>
 
@@ -165,8 +170,25 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           isMobileExpanded ? 'block' : 'hidden'
         } sm:block pt-1 sm:pt-0 border-t sm:border-t-0 border-zinc-800/60`}
       >
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3">
-          {/* 1. Brand */}
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-2.5 sm:gap-3">
+          {/* 1. Tipo (Carro vs Moto) */}
+          <div className="col-span-1">
+            <label htmlFor="filterTypeInput" className="text-[10px] sm:text-[11px] font-semibold text-zinc-400 block mb-1">
+              Tipo
+            </label>
+            <select
+              id="filterTypeInput"
+              value={selectedType}
+              onChange={(e) => onTypeChange(e.target.value)}
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2.5 sm:px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer"
+            >
+              <option value="all">Todos (Carro/Moto)</option>
+              <option value="carro">Carros</option>
+              <option value="moto">Motos</option>
+            </select>
+          </div>
+
+          {/* 2. Brand */}
           <div className="col-span-1">
             <label htmlFor="filterBrandInput" className="text-[10px] sm:text-[11px] font-semibold text-zinc-400 block mb-1">
               Marca
@@ -175,7 +197,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               id="filterBrandInput"
               value={selectedBrand}
               onChange={(e) => onBrandChange(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2.5 sm:px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500 cursor-pointer"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2.5 sm:px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer"
             >
               <option value="all">Todas ({brands.length})</option>
               {brands.map((b) => (
@@ -186,7 +208,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             </select>
           </div>
 
-          {/* 2. Model (Chained to Brand) */}
+          {/* 3. Model (Chained & Only in stock) */}
           <div className="col-span-1">
             <label htmlFor="filterModelInput" className="text-[10px] sm:text-[11px] font-semibold text-zinc-400 block mb-1">
               Modelo
@@ -199,7 +221,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               className={`w-full border rounded-xl px-2.5 sm:px-3 py-2 text-xs text-white focus:outline-none transition-colors ${
                 !isBrandSelected
                   ? 'bg-zinc-950/50 border-zinc-800/50 text-zinc-500 cursor-not-allowed'
-                  : 'bg-zinc-950 border-zinc-800 focus:border-red-500 cursor-pointer'
+                  : 'bg-zinc-950 border-zinc-800 focus:border-amber-500 cursor-pointer'
               }`}
             >
               {!isBrandSelected ? (
@@ -217,26 +239,28 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             </select>
           </div>
 
-          {/* 3. Body type */}
+          {/* 4. Body type */}
           <div className="col-span-1">
             <label htmlFor="filterBodyTypeInput" className="text-[10px] sm:text-[11px] font-semibold text-zinc-400 block mb-1">
-              Carroceria
+              Carroceria / Categoria
             </label>
             <select
               id="filterBodyTypeInput"
               value={selectedBodyType}
               onChange={(e) => onBodyTypeChange(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2.5 sm:px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500 cursor-pointer"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2.5 sm:px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer"
             >
               <option value="all">Todas</option>
               <option value="Sedan">Sedan</option>
               <option value="SUV">SUV</option>
               <option value="Hatchback">Hatchback</option>
               <option value="Pickup">Pickup</option>
+              <option value="Coupe">Coupé / Esportivo</option>
+              <option value="Moto">Moto</option>
             </select>
           </div>
 
-          {/* 4. Transmission */}
+          {/* 5. Transmission */}
           <div className="col-span-1">
             <label htmlFor="filterTransmissionInput" className="text-[10px] sm:text-[11px] font-semibold text-zinc-400 block mb-1">
               Câmbio
@@ -245,7 +269,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               id="filterTransmissionInput"
               value={selectedTransmission}
               onChange={(e) => onTransmissionChange(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2.5 sm:px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500 cursor-pointer"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-2.5 sm:px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer"
             >
               <option value="all">Todos</option>
               <option value="Automático">Automático</option>
@@ -255,8 +279,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             </select>
           </div>
 
-          {/* 5. Sorting (Desktop view) */}
-          <div className="col-span-2 lg:col-span-1 hidden sm:block">
+          {/* 6. Sorting */}
+          <div className="col-span-1">
             <label htmlFor="filterSortByInput" className="text-[11px] font-semibold text-zinc-400 block mb-1 flex items-center gap-1">
               <ArrowUpDown className="w-3 h-3 text-zinc-500" />
               Ordenar por
@@ -265,12 +289,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               id="filterSortByInput"
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value as SortOption)}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500 cursor-pointer"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer"
             >
               <option value="price_asc">Menor Preço</option>
               <option value="price_desc">Maior Preço</option>
               <option value="km_asc">Menor KM</option>
-              <option value="year_desc">Mais Recentes (Ano)</option>
+              <option value="year_desc">Mais Recentes</option>
             </select>
           </div>
         </div>
@@ -289,7 +313,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
           <button
             onClick={() => setIsMobileExpanded(false)}
-            className="flex-1 py-2 px-3 rounded-xl font-bold text-xs bg-red-600 hover:bg-red-500 text-white flex items-center justify-center gap-1.5 shadow-md shadow-red-950"
+            className="flex-1 py-2 px-3 rounded-xl font-bold text-xs bg-amber-500 hover:bg-amber-400 text-black flex items-center justify-center gap-1.5 shadow-md shadow-amber-950 cursor-pointer"
           >
             <Check className="w-3.5 h-3.5" />
             Aplicar Filtros ({totalFiltered})

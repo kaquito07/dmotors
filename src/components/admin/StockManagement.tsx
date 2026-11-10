@@ -17,8 +17,8 @@ import {
   Link,
   X,
   Loader2,
-  Sparkles
 } from 'lucide-react';
+import { CONTACT_INFO } from '../../config/contact';
 
 interface StockManagementProps {
   vehicles: Vehicle[];
@@ -173,18 +173,18 @@ export const StockManagement: React.FC<StockManagementProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-            Gestão de Estoque Dmotors
+            Gestão de Estoque {CONTACT_INFO.brandName}
           </h2>
           <p className="text-xs text-zinc-400 mt-0.5">
-            Gerencie veículos próprios e consignados, precificação, margem e fotos de capa.
+            Gerencie carros e motos (próprios e consignados), precificação, margens e fotos.
           </p>
         </div>
 
         <button
           onClick={onOpenAddModal}
-          className="px-4 py-2.5 rounded-xl font-bold text-xs bg-red-600 hover:bg-red-500 text-white flex items-center gap-2 shadow-lg shadow-red-950/60 transition-all cursor-pointer self-start sm:self-auto"
+          className="px-4 py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black flex items-center gap-2 shadow-lg shadow-amber-950/60 transition-all cursor-pointer self-start sm:self-auto"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 text-black" />
           Cadastrar Novo Veículo
         </button>
       </div>
@@ -201,7 +201,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
             onClick={() => setOwnershipFilter('all')}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               ownershipFilter === 'all'
-                ? 'bg-zinc-800 text-white border border-zinc-700'
+                ? 'bg-amber-500 text-black font-bold'
                 : 'text-zinc-400 hover:text-white bg-zinc-950'
             }`}
           >
@@ -261,12 +261,12 @@ export const StockManagement: React.FC<StockManagementProps> = ({
               onClick={() => setStatusFilter('opportunity')}
               className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 statusFilter === 'opportunity'
-                  ? 'bg-red-600 text-white'
+                  ? 'bg-amber-500 text-black font-bold'
                   : 'text-zinc-400 hover:text-white bg-zinc-950'
               }`}
             >
-              <Flame className="w-3 h-3 text-red-500 fill-current" />
-              Oportunidades ({opportunityCount})
+              <Flame className="w-3 h-3 text-amber-400 fill-current" />
+              Destaques ({opportunityCount})
             </button>
             <button
               onClick={() => setStatusFilter('sold')}
@@ -285,10 +285,10 @@ export const StockManagement: React.FC<StockManagementProps> = ({
             <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Buscar por modelo ou placa..."
+              placeholder="Buscar modelo ou placa..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-red-500"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
             />
           </div>
         </div>
@@ -296,26 +296,27 @@ export const StockManagement: React.FC<StockManagementProps> = ({
         <div className="text-xs text-zinc-400 flex items-center justify-between border-t border-zinc-800/60 pt-2.5">
           <span>Exibindo <strong>{filteredVehicles.length}</strong> de {vehicles.length} veículos cadastrados</span>
           <span className="text-[11px] text-zinc-500 hidden sm:inline">
-            💡 Dica: Clique na foto de qualquer carro para trocá-la instantaneamente
+            💡 Dica: Clique na foto do veículo para trocá-la instantaneamente
           </span>
         </div>
       </div>
 
-      {/* Stock Table */}
+      {/* Stock Table - Optimized to fit 1440px cleanly */}
       <div className="bg-zinc-900/90 border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-xs min-w-[1020px]">
             <thead>
               <tr className="border-b border-zinc-800 bg-zinc-950/60 text-zinc-400 font-semibold uppercase text-[10px]">
-                <th className="py-3.5 px-3">Veículo & Foto</th>
-                <th className="py-3.5 px-2.5">Modalidade</th>
-                <th className="py-3.5 px-2.5">Status</th>
-                <th className="py-3.5 px-2.5">Custo / Repasse</th>
-                <th className="py-3.5 px-2.5">Preço Venda</th>
-                <th className="py-3.5 px-2.5">Margem / Comissão</th>
-                <th className="py-3.5 px-2.5">Giro</th>
-                <th className="py-3.5 px-2.5 text-center">Destaque</th>
-                <th className="py-3.5 px-3 text-right whitespace-nowrap">Ações Rápidas</th>
+                <th className="py-3 px-3">Veículo</th>
+                <th className="py-3 px-2">Tipo</th>
+                <th className="py-3 px-2">Modalidade</th>
+                <th className="py-3 px-2">Status</th>
+                <th className="py-3 px-2">Custo / Repasse</th>
+                <th className="py-3 px-2">Preço Venda</th>
+                <th className="py-3 px-2">Margem / Comissão</th>
+                <th className="py-3 px-2">Giro</th>
+                <th className="py-3 px-2 text-center">Destaque</th>
+                <th className="py-3 px-3 text-right whitespace-nowrap">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/60">
@@ -326,19 +327,20 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                 const marginPct = ((profit / currentPrice) * 100).toFixed(1);
                 const days = calculateDaysInStock(car.entryDate, car.soldDate);
                 const isConsignado = car.ownershipType === 'consignado';
+                const isMoto = car.type === 'moto';
 
                 return (
                   <tr
                     key={car.id}
                     className="hover:bg-zinc-850/50 transition-colors group"
                   >
-                    {/* Car info with photo - CLICKABLE FOR INSTANT 2-SECOND PHOTO REPLACEMENT */}
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-3">
+                    {/* Car info with photo */}
+                    <td className="py-2.5 px-3">
+                      <div className="flex items-center gap-2.5">
                         <div
                           onClick={() => handleTriggerQuickUpload(car)}
-                          title="Clique para trocar a foto de capa deste carro instantaneamente"
-                          className="relative w-14 h-10 rounded-lg overflow-hidden bg-zinc-950 border border-zinc-800 shrink-0 cursor-pointer group/thumb hover:border-red-500 hover:ring-2 hover:ring-red-500/30 transition-all shadow-sm"
+                          title="Clique para trocar a foto de capa"
+                          className="relative w-12 h-9 rounded-lg overflow-hidden bg-zinc-950 border border-zinc-800 shrink-0 cursor-pointer group/thumb hover:border-amber-400 hover:ring-2 hover:ring-amber-400/30 transition-all shadow-sm"
                         >
                           <img
                             src={car.images[0]}
@@ -348,33 +350,41 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                               e.currentTarget.src = 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1000&q=80';
                             }}
                           />
-                          {/* Hover camera badge */}
                           <div className="absolute inset-0 bg-black/70 opacity-0 group-hover/thumb:opacity-100 flex flex-col items-center justify-center transition-opacity text-white">
-                            <Camera className="w-3.5 h-3.5 text-red-400" />
-                            <span className="text-[8px] font-bold uppercase tracking-tight">Trocar</span>
+                            <Camera className="w-3 h-3 text-amber-400" />
+                            <span className="text-[7px] font-bold uppercase tracking-tight">Trocar</span>
                           </div>
                         </div>
 
-                        <div className="min-w-0">
-                          <strong className="text-white block font-medium tracking-tight">
+                        <div className="min-w-0 max-w-[210px]">
+                          <strong className="text-white block font-medium tracking-tight truncate">
                             {car.brand} {car.model}
                           </strong>
-                          <span className="text-[11px] text-zinc-400 block truncate max-w-xs">
-                            {car.version} · Ano {car.yearFabrication}/{car.yearModel} · Final {car.plateEnd}
+                          <span className="text-[10px] text-zinc-400 block truncate">
+                            {car.version} · {car.yearFabrication}/{car.yearModel} · Final {car.plateEnd}
                           </span>
                         </div>
                       </div>
                     </td>
 
+                    {/* Tipo (Carro vs Moto) */}
+                    <td className="py-2.5 px-2 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                        isMoto ? 'bg-purple-950/80 text-purple-300 border border-purple-800/60' : 'bg-zinc-800 text-zinc-300 border border-zinc-700'
+                      }`}>
+                        {isMoto ? 'Moto' : 'Carro'}
+                      </span>
+                    </td>
+
                     {/* Modalidade Badge (Proprio vs Consignado) */}
-                    <td className="py-3 px-3 whitespace-nowrap">
+                    <td className="py-2.5 px-2 whitespace-nowrap">
                       {isConsignado ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-950/80 text-amber-300 border border-amber-800/60 shadow-sm">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-950/80 text-amber-300 border border-amber-800/60 shadow-sm">
                           <UserCheck className="w-3 h-3 text-amber-400" />
                           Consignado
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 shadow-sm">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 shadow-sm">
                           <Building2 className="w-3 h-3 text-emerald-400" />
                           Próprio
                         </span>
@@ -382,7 +392,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                     </td>
 
                     {/* Status */}
-                    <td className="py-3 px-3">
+                    <td className="py-2.5 px-2 whitespace-nowrap">
                       {isSold ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-zinc-800 text-zinc-400 border border-zinc-700">
                           Vendido
@@ -396,69 +406,71 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                     </td>
 
                     {/* Purchase Price (Custo / Repasse) */}
-                    <td className="py-3 px-3 font-mono text-zinc-300">
+                    <td className="py-2.5 px-2 font-mono text-zinc-300 whitespace-nowrap">
                       <div>
                         <span>{formatBRL(car.purchasePrice)}</span>
                         {isConsignado && (
-                          <span className="block text-[9px] text-amber-400/80">Repasse Dono</span>
+                          <span className="block text-[8px] text-amber-400/80">Repasse</span>
                         )}
                       </div>
                     </td>
 
                     {/* Sale Price */}
-                    <td className="py-3 px-3 font-mono font-bold text-white">
+                    <td className="py-2.5 px-2 font-mono font-bold text-white whitespace-nowrap">
                       {formatBRL(currentPrice)}
+                      {car.isIllustrativePrice && (
+                        <span className="block text-[8px] text-zinc-500 font-sans">Ilustrativo</span>
+                      )}
                     </td>
 
                     {/* Margin or Commission */}
-                    <td className="py-3 px-3">
+                    <td className="py-2.5 px-2 whitespace-nowrap">
                       <div className="flex flex-col font-mono">
-                        <span className={`font-semibold ${profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        <span className={`font-semibold ${profit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                           {formatBRL(profit)}
                         </span>
-                        <span className="text-[10px] text-zinc-400">
+                        <span className="text-[9px] text-zinc-400">
                           {marginPct}% {isConsignado ? 'comissão' : 'margem'}
                         </span>
                       </div>
                     </td>
 
                     {/* Days in Stock / Turnover */}
-                    <td className="py-3 px-3">
+                    <td className="py-2.5 px-2 whitespace-nowrap">
                       <span className={`font-mono text-xs ${days > 45 ? 'text-amber-400 font-bold' : 'text-zinc-300'}`}>
                         {days} dias
                       </span>
                     </td>
 
                     {/* Opportunity Toggle Button */}
-                    <td className="py-3 px-3 text-center">
+                    <td className="py-2.5 px-2 text-center whitespace-nowrap">
                       {!isSold ? (
                         <button
                           onClick={() => onToggleOpportunity(car.id)}
                           className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
                             car.isOpportunity
-                              ? 'bg-red-600/30 border-red-500 text-red-400 hover:bg-red-600/40'
+                              ? 'bg-amber-500/20 border-amber-500 text-amber-400 hover:bg-amber-500/30'
                               : 'bg-zinc-950 border-zinc-800 text-zinc-600 hover:text-zinc-400'
                           }`}
                           title={car.isOpportunity ? 'Remover dos destaques' : 'Destacar na Vitrine'}
                         >
-                          <Flame className={`w-4 h-4 ${car.isOpportunity ? 'fill-red-500 text-red-500' : ''}`} />
+                          <Flame className={`w-3.5 h-3.5 ${car.isOpportunity ? 'fill-amber-400 text-amber-400' : ''}`} />
                         </button>
                       ) : (
                         <span className="text-zinc-600">-</span>
                       )}
                     </td>
 
-                    {/* Action Buttons */}
-                    <td className="py-3 px-3 text-right">
+                    {/* Action Buttons - Always visible and clean */}
+                    <td className="py-2.5 px-3 text-right">
                       <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
-                        {/* Quick photo change button */}
                         <button
                           onClick={() => {
                             setQuickTargetCar(car);
                             setIsQuickModalOpen(true);
                           }}
                           className="p-1.5 rounded-lg text-zinc-400 hover:text-white bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition-colors cursor-pointer shrink-0"
-                          title="Trocar Foto de Capa (Upload ou Link)"
+                          title="Trocar Foto de Capa"
                         >
                           <Camera className="w-3.5 h-3.5 text-zinc-400" />
                         </button>
@@ -466,7 +478,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                         {!isSold && (
                           <button
                             onClick={() => onOpenSoldModal(car)}
-                            className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-500/40 transition-colors flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
+                            className="px-2 py-1 rounded-lg text-[11px] font-bold bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-500/40 transition-colors flex items-center gap-1 cursor-pointer shrink-0"
                             title="Registrar Venda do Veículo"
                           >
                             <Check className="w-3 h-3" />
@@ -477,7 +489,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                         <button
                           onClick={() => onOpenEditModal(car)}
                           className="p-1.5 rounded-lg text-zinc-400 hover:text-white bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition-colors cursor-pointer shrink-0"
-                          title="Editar Ficha Completa & Galeria"
+                          title="Editar Veículo"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
@@ -488,7 +500,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                               onDeleteVehicle(car.id);
                             }
                           }}
-                          className="p-1.5 rounded-lg text-zinc-400 hover:text-red-400 bg-zinc-950 border border-zinc-800 hover:border-red-900 transition-colors cursor-pointer shrink-0"
+                          className="p-1.5 rounded-lg text-zinc-400 hover:text-rose-400 bg-zinc-950 border border-zinc-800 hover:border-rose-900 transition-colors cursor-pointer shrink-0"
                           title="Excluir Veículo"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -503,15 +515,15 @@ export const StockManagement: React.FC<StockManagementProps> = ({
         </div>
       </div>
 
-      {/* QUICK PHOTO MODAL (Fast 2-Second Swap: Upload from Computer or Paste URL) */}
+      {/* QUICK PHOTO MODAL */}
       {isQuickModalOpen && quickTargetCar && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl p-5 space-y-4">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <div className="flex items-center gap-2">
-                <Camera className="w-4 h-4 text-red-500" />
+                <Camera className="w-4 h-4 text-amber-400" />
                 <h3 className="text-sm font-bold text-white">
-                  Trocar Foto de Capa (Rápido)
+                  Trocar Foto de Capa
                 </h3>
               </div>
               <button
@@ -519,7 +531,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                   setIsQuickModalOpen(false);
                   setQuickTargetCar(null);
                 }}
-                className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-zinc-800"
+                className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-zinc-800 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -553,7 +565,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                 type="button"
                 onClick={() => quickFileInputRef.current?.click()}
                 disabled={isProcessingPhoto}
-                className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-red-600 hover:bg-red-500 text-white flex items-center justify-center gap-2 shadow-md shadow-red-950 transition-all cursor-pointer disabled:opacity-50"
+                className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-amber-500 hover:bg-amber-400 text-black flex items-center justify-center gap-2 shadow-md shadow-amber-950 transition-all cursor-pointer disabled:opacity-50"
               >
                 {isProcessingPhoto ? (
                   <>
@@ -584,7 +596,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                   placeholder="https://exemplo.com/foto-do-carro.jpg"
                   value={quickUrlInput}
                   onChange={(e) => setQuickUrlInput(e.target.value)}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-red-500"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
                 />
               </div>
 

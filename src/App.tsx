@@ -11,8 +11,8 @@ import { ShowcaseView } from './components/showcase/ShowcaseView';
 import { AdminView } from './components/admin/AdminView';
 import { ToastContainer, ToastMessage } from './components/common/Toast';
 
-const STORAGE_KEY_VEHICLES = 'dmotors_vehicles_v4';
-const STORAGE_KEY_LEADS = 'dmotors_leads_v1';
+const STORAGE_KEY_VEHICLES = 'dmotors_vehicles_v5';
+const STORAGE_KEY_LEADS = 'dmotors_leads_v2';
 
 export default function App() {
   // Global View Mode Toggle: Client (Public Showcase) vs Admin (Owner BI & Stock)

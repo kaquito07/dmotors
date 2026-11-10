@@ -1,7 +1,8 @@
 import React from 'react';
 import { Vehicle } from '../../types/vehicle';
 import { formatBRL, formatKM } from '../../utils/formatters';
-import { Flame, ShieldCheck, ArrowRight, Sparkles, ChevronRight } from 'lucide-react';
+import { Flame, ArrowRight, Sparkles, ChevronRight, Gauge } from 'lucide-react';
+import { CONTACT_INFO } from '../../config/contact';
 
 interface OpportunityCarouselProps {
   opportunities: Vehicle[];
@@ -21,27 +22,27 @@ export const OpportunityCarousel: React.FC<OpportunityCarouselProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 sm:mb-8 gap-2 sm:gap-4">
           <div>
-            <div className="flex items-center gap-2 text-red-500 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-1">
-              <Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-red-500" />
-              Seleção Exclusiva da Semana
+            <div className="flex items-center gap-2 text-amber-400 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-1">
+              <Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400 text-amber-400" />
+              Destaques da Semana
             </div>
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-xl sm:text-3xl font-black text-white tracking-tight">
-                Oportunidades Especiais Dmotors
+                Oportunidades {CONTACT_INFO.brandName}
               </h2>
               {/* Subtle visual swipe indicator on mobile */}
-              <span className="md:hidden text-[11px] font-semibold text-red-400 flex items-center gap-0.5 shrink-0 bg-red-950/60 border border-red-800/50 px-2 py-0.5 rounded-full">
+              <span className="md:hidden text-[11px] font-semibold text-amber-300 flex items-center gap-0.5 shrink-0 bg-amber-950/60 border border-amber-600/50 px-2 py-0.5 rounded-full">
                 Deslize para o lado <ChevronRight className="w-3 h-3" />
               </span>
             </div>
             <p className="text-xs sm:text-sm text-zinc-400 mt-1 line-clamp-1 sm:line-clamp-none">
-              Veículos com preços promocionais abaixo da FIPE e condições diferenciadas de entrada.
+              Veículos e motos selecionados com excelentes condições de financiamento e entrada no cartão.
             </p>
           </div>
 
           <div className="hidden sm:flex items-center gap-2 text-xs text-zinc-400 font-medium shrink-0">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-            <span>Atualizado hoje com {opportunities.length} unidades limitadas</span>
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+            <span>{opportunities.length} unidades em destaque</span>
           </div>
         </div>
 
@@ -53,13 +54,20 @@ export const OpportunityCarousel: React.FC<OpportunityCarouselProps> = ({
               <div
                 key={car.id}
                 onClick={() => onSelectVehicle(car)}
-                className="min-w-[85vw] sm:min-w-[340px] md:min-w-0 snap-center shrink-0 group relative rounded-2xl bg-zinc-900/90 border border-red-500/30 hover:border-red-500/80 p-1.5 transition-all duration-300 hover:shadow-2xl hover:shadow-red-950/40 cursor-pointer flex flex-col justify-between"
+                className="min-w-[85vw] sm:min-w-[340px] md:min-w-0 snap-center shrink-0 group relative rounded-2xl bg-zinc-900/90 border border-amber-500/30 hover:border-amber-400/80 p-1.5 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-950/30 cursor-pointer flex flex-col justify-between"
               >
-                {/* Special Ribbon */}
-                <div className="absolute top-3 sm:top-4 left-3 sm:left-4 z-10 flex items-center gap-1.5 bg-red-600 text-white text-[10px] sm:text-[11px] font-extrabold uppercase px-2.5 sm:px-3 py-1 rounded-md shadow-lg shadow-black/80">
-                  <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-white" />
+                {/* Special Ribbon in Gold */}
+                <div className="absolute top-3 sm:top-4 left-3 sm:left-4 z-10 flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black text-[10px] sm:text-[11px] font-extrabold uppercase px-2.5 sm:px-3 py-1 rounded-md shadow-lg shadow-black/80">
+                  <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-black" />
                   <span>Oportunidade</span>
                 </div>
+
+                {/* Preço ilustrativo badge if applicable */}
+                {car.isIllustrativePrice && (
+                  <div className="absolute top-3 sm:top-4 right-3 sm:right-4 z-10 bg-zinc-950/90 border border-zinc-700 text-amber-300 text-[10px] font-semibold px-2 py-0.5 rounded shadow">
+                    Preço ilustrativo
+                  </div>
+                )}
 
                 {/* Image */}
                 <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-zinc-950">
@@ -86,7 +94,7 @@ export const OpportunityCarousel: React.FC<OpportunityCarouselProps> = ({
                 <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between">
                   <div>
                     <div className="flex items-baseline justify-between gap-2">
-                      <h3 className="text-base sm:text-lg font-black text-white group-hover:text-red-400 transition-colors truncate">
+                      <h3 className="text-base sm:text-lg font-black text-white group-hover:text-amber-400 transition-colors truncate">
                         {car.brand} {car.model}
                       </h3>
                       <span className="text-xs text-zinc-400 font-mono shrink-0">
@@ -96,15 +104,16 @@ export const OpportunityCarousel: React.FC<OpportunityCarouselProps> = ({
 
                     <p className="text-xs text-zinc-400 line-clamp-1 mt-0.5">{car.version}</p>
 
-                    <div className="flex items-center gap-2 sm:gap-3 text-xs text-zinc-400 mt-2.5 pt-2.5 border-t border-zinc-800">
-                      <span>{formatKM(car.mileage)}</span>
-                      <span>·</span>
-                      <span className="truncate">{car.transmission}</span>
-                      <span>·</span>
-                      <span className="flex items-center gap-1 text-emerald-400 shrink-0">
-                        <ShieldCheck className="w-3.5 h-3.5" />
-                        Laudo 100%
+                    {/* SEMPRE QUILOMETRAGEM EM DESTAQUE */}
+                    <div className="flex items-center gap-2 sm:gap-3 text-xs mt-2.5 pt-2.5 border-t border-zinc-800">
+                      <span className="flex items-center gap-1 text-amber-300 font-bold bg-amber-950/50 border border-amber-600/30 px-2 py-0.5 rounded">
+                        <Gauge className="w-3.5 h-3.5 text-amber-400" />
+                        {formatKM(car.mileage)}
                       </span>
+                      <span className="text-zinc-500">·</span>
+                      <span className="text-zinc-400 truncate">{car.transmission}</span>
+                      <span className="text-zinc-500">·</span>
+                      <span className="text-zinc-400 capitalize">{car.type}</span>
                     </div>
                   </div>
 
@@ -119,10 +128,10 @@ export const OpportunityCarousel: React.FC<OpportunityCarouselProps> = ({
                         e.stopPropagation();
                         onSelectVehicle(car);
                       }}
-                      className="px-3 py-2 text-xs font-bold rounded-lg bg-red-600 hover:bg-red-500 text-white flex items-center gap-1.5 transition-colors shadow-md shadow-red-950"
+                      className="px-3 py-2 text-xs font-bold rounded-lg bg-amber-500 hover:bg-amber-400 text-black flex items-center gap-1.5 transition-colors shadow-md shadow-amber-950 cursor-pointer"
                     >
                       Ver Detalhes
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-3.5 h-3.5 text-black" />
                     </button>
                   </div>
                 </div>

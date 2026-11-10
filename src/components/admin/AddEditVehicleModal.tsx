@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Vehicle } from '../../types/vehicle';
+import { Vehicle, VehicleType } from '../../types/vehicle';
 import { BRAND_MODELS_CATALOG } from '../../data/mockVehicles';
 import { formatBRL } from '../../utils/formatters';
 import { compressImageFile } from '../../utils/imageCompressor';
@@ -17,8 +17,10 @@ import {
   Plus,
   Loader2,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Info,
 } from 'lucide-react';
+import { CONTACT_INFO } from '../../config/contact';
 
 interface AddEditVehicleModalProps {
   isOpen: boolean;
@@ -39,34 +41,38 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Form State
+  const [vehicleType, setVehicleType] = useState<VehicleType>(
+    vehicleToEdit?.type || 'carro'
+  );
   const [ownershipType, setOwnershipType] = useState<Vehicle['ownershipType']>(
     vehicleToEdit?.ownershipType || 'proprio'
   );
-  const [brand, setBrand] = useState(vehicleToEdit?.brand || 'Audi');
-  const [model, setModel] = useState(vehicleToEdit?.model || 'A3 Sedan');
-  const [version, setVersion] = useState(vehicleToEdit?.version || 'Prestige Plus 2.0 TFSI S-tronic');
+  const [brand, setBrand] = useState(vehicleToEdit?.brand || 'Fiat');
+  const [model, setModel] = useState(vehicleToEdit?.model || 'Toro');
+  const [version, setVersion] = useState(vehicleToEdit?.version || 'Volcano 1.3 T270 4x2 Flex Automática');
   const [yearFabrication, setYearFabrication] = useState<number>(vehicleToEdit?.yearFabrication || 2023);
   const [yearModel, setYearModel] = useState<number>(vehicleToEdit?.yearModel || 2023);
-  const [price, setPrice] = useState<number>(vehicleToEdit?.price || 229900);
-  const [purchasePrice, setPurchasePrice] = useState<number>(vehicleToEdit?.purchasePrice || 198000);
-  const [fipePrice, setFipePrice] = useState<number>(vehicleToEdit?.fipePrice || 242000);
-  const [mileage, setMileage] = useState<number>(vehicleToEdit?.mileage || 25000);
-  const [color, setColor] = useState(vehicleToEdit?.color || 'Cinza Daytona');
+  const [price, setPrice] = useState<number>(vehicleToEdit?.price || 126900);
+  const [isIllustrativePrice, setIsIllustrativePrice] = useState<boolean>(vehicleToEdit?.isIllustrativePrice || false);
+  const [purchasePrice, setPurchasePrice] = useState<number>(vehicleToEdit?.purchasePrice || 112000);
+  const [fipePrice, setFipePrice] = useState<number>(vehicleToEdit?.fipePrice || 132000);
+  const [mileage, setMileage] = useState<number>(vehicleToEdit?.mileage || 28000);
+  const [color, setColor] = useState(vehicleToEdit?.color || 'Cinza Sting');
   const [transmission, setTransmission] = useState<Vehicle['transmission']>(
-    vehicleToEdit?.transmission || 'Dupla Embreagem'
+    vehicleToEdit?.transmission || 'Automático'
   );
-  const [fuel, setFuel] = useState<Vehicle['fuel']>(vehicleToEdit?.fuel || 'Gasolina');
-  const [bodyType, setBodyType] = useState<Vehicle['bodyType']>(vehicleToEdit?.bodyType || 'Sedan');
-  const [engine, setEngine] = useState(vehicleToEdit?.engine || '2.0 TFSI 190cv');
-  const [powerCv, setPowerCv] = useState<number>(vehicleToEdit?.powerCv || 190);
-  const [plateEnd, setPlateEnd] = useState(vehicleToEdit?.plateEnd || '7');
+  const [fuel, setFuel] = useState<Vehicle['fuel']>(vehicleToEdit?.fuel || 'Flex');
+  const [bodyType, setBodyType] = useState<Vehicle['bodyType']>(vehicleToEdit?.bodyType || 'Pickup');
+  const [engine, setEngine] = useState(vehicleToEdit?.engine || '1.3 Turbo 185cv');
+  const [powerCv, setPowerCv] = useState<number>(vehicleToEdit?.powerCv || 185);
+  const [plateEnd, setPlateEnd] = useState(vehicleToEdit?.plateEnd || '3');
   const [isOpportunity, setIsOpportunity] = useState(vehicleToEdit?.isOpportunity || false);
 
   // Images state (Array of strings)
   const [images, setImages] = useState<string[]>(
     vehicleToEdit?.images && vehicleToEdit.images.length > 0
       ? vehicleToEdit.images
-      : ['https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1000&q=80']
+      : ['https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1000&q=80']
   );
   const [urlInput, setUrlInput] = useState('');
   const [isUploading, setIsUploading] = useState(false);
@@ -74,12 +80,13 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
 
   const [description, setDescription] = useState(
     vehicleToEdit?.description ||
-      'Veículo selecionado Dmotors. Laudo pericial cautelar 100% aprovado, revisões em dia e garantia de fábrica ou loja.'
+      'Veículo selecionado D\'MOTORS. Revisado com procedência garantida, laudo cautelar aprovado e excelente custo-benefício.'
   );
 
   // Synchronize state when vehicleToEdit or modal open state changes
   React.useEffect(() => {
     if (vehicleToEdit) {
+      setVehicleType(vehicleToEdit.type || 'carro');
       setOwnershipType(vehicleToEdit.ownershipType || 'proprio');
       setBrand(vehicleToEdit.brand);
       setModel(vehicleToEdit.model);
@@ -87,6 +94,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
       setYearFabrication(vehicleToEdit.yearFabrication);
       setYearModel(vehicleToEdit.yearModel);
       setPrice(vehicleToEdit.price);
+      setIsIllustrativePrice(vehicleToEdit.isIllustrativePrice || false);
       setPurchasePrice(vehicleToEdit.purchasePrice);
       setFipePrice(vehicleToEdit.fipePrice);
       setMileage(vehicleToEdit.mileage);
@@ -101,35 +109,37 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
       setImages(
         vehicleToEdit.images && vehicleToEdit.images.length > 0
           ? vehicleToEdit.images
-          : ['https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1000&q=80']
+          : ['https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1000&q=80']
       );
       setDescription(
         vehicleToEdit.description ||
-          'Veículo selecionado Dmotors. Laudo pericial cautelar 100% aprovado, revisões em dia e garantia de fábrica ou loja.'
+          'Veículo selecionado D\'MOTORS. Revisado com procedência garantida, laudo cautelar aprovado e excelente custo-benefício.'
       );
     } else {
       // Default initial values for new vehicle
+      setVehicleType('carro');
       setOwnershipType('proprio');
-      setBrand('Audi');
-      setModel('A3 Sedan');
-      setVersion('Prestige Plus 2.0 TFSI S-tronic');
+      setBrand('Fiat');
+      setModel('Toro');
+      setVersion('Volcano 1.3 T270 4x2 Flex Automática');
       setYearFabrication(2023);
       setYearModel(2023);
-      setPrice(229900);
-      setPurchasePrice(198000);
-      setFipePrice(242000);
-      setMileage(25000);
-      setColor('Cinza Daytona');
-      setTransmission('Dupla Embreagem');
-      setFuel('Gasolina');
-      setBodyType('Sedan');
-      setEngine('2.0 TFSI 190cv');
-      setPowerCv(190);
-      setPlateEnd('7');
+      setPrice(126900);
+      setIsIllustrativePrice(false);
+      setPurchasePrice(112000);
+      setFipePrice(132000);
+      setMileage(28000);
+      setColor('Cinza Sting');
+      setTransmission('Automático');
+      setFuel('Flex');
+      setBodyType('Pickup');
+      setEngine('1.3 Turbo 185cv');
+      setPowerCv(185);
+      setPlateEnd('3');
       setIsOpportunity(false);
-      setImages(['https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1000&q=80']);
+      setImages(['https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1000&q=80']);
       setDescription(
-        'Veículo selecionado Dmotors. Laudo pericial cautelar 100% aprovado, revisões em dia e garantia de fábrica ou loja.'
+        'Veículo selecionado D\'MOTORS. Revisado com procedência garantida, laudo cautelar aprovado e excelente custo-benefício.'
       );
     }
     setUrlInput('');
@@ -140,7 +150,6 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
   const currentBrandCatalog = BRAND_MODELS_CATALOG.find((b) => b.brand === brand);
   const availableModels = currentBrandCatalog ? currentBrandCatalog.models : [];
 
-  // When Brand changes in ADD mode, automatically sync Model and preset specs
   const handleBrandChange = (newBrand: string) => {
     setBrand(newBrand);
     const catalog = BRAND_MODELS_CATALOG.find((b) => b.brand === newBrand);
@@ -226,7 +235,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
       const filtered = prev.filter((_, idx) => idx !== index);
       return filtered.length > 0
         ? filtered
-        : ['https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1000&q=80'];
+        : ['https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1000&q=80'];
     });
   };
 
@@ -253,12 +262,14 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
 
     const vehicleData: Vehicle = {
       id: vehicleToEdit?.id || `dm-${Date.now().toString().slice(-4)}`,
+      type: vehicleType,
       brand,
       model,
       version,
       yearFabrication: Number(yearFabrication),
       yearModel: Number(yearModel),
       price: Number(price),
+      isIllustrativePrice,
       fipePrice: Number(fipePrice),
       purchasePrice: Number(purchasePrice),
       status: vehicleToEdit?.status || 'available',
@@ -269,29 +280,27 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
       color,
       transmission,
       fuel,
-      bodyType,
+      bodyType: vehicleType === 'moto' ? 'Moto' : bodyType,
       plateEnd,
-      doors: 4,
+      doors: vehicleType === 'moto' ? undefined : 4,
       engine,
       powerCv: Number(powerCv),
-      torqueKgfm: 28.5,
-      cityConsumption: 11.5,
-      roadConsumption: 14.2,
+      torqueKgfm: 25.0,
+      cityConsumption: 11.0,
+      roadConsumption: 14.0,
       features: vehicleToEdit?.features || [
-        'Teto Solar',
-        'Faróis Full LED',
-        'Câmera de Ré com Sensores',
-        'Bancos em Couro',
-        'Central Multimídia com Apple CarPlay',
-        'Piloto Automático',
+        'Revisado recentemente',
+        'Laudo cautelar aprovado',
+        'Manual e chave reserva',
+        'Garantia de procedência',
       ],
       entryDate: vehicleToEdit?.entryDate || '2026-10-26',
       images: images.length > 0 ? images : [
-        'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1000&q=80'
+        'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1000&q=80'
       ],
       inspectionApproved: true,
-      warrantyMonths: 12,
-      location: 'Guarulhos - SP (Av. Paulo Faccini, 32 - Macedo)',
+      warrantyMonths: 3,
+      location: CONTACT_INFO.cityState,
       description,
     };
 
@@ -305,21 +314,21 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-zinc-800 flex items-center justify-between bg-zinc-950 sticky top-0 z-10">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-400">
+            <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
               <Car className="w-4 h-4" />
             </div>
             <div>
               <h3 className="text-base font-bold text-white">
-                {isEditing ? 'Editar Veículo do Estoque' : 'Cadastrar Novo Veículo no Estoque'}
+                {isEditing ? 'Editar Veículo do Estoque' : `Cadastrar Novo Veículo · ${CONTACT_INFO.brandName}`}
               </h3>
               <p className="text-xs text-zinc-400">
-                Sincronizado automaticamente com a Vitrine Pública e o BI Dmotors
+                Sincronizado automaticamente com a Vitrine Pública e o BI
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors"
+            className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -327,7 +336,41 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto space-y-5">
-          {/* 1. Modalidade de Estoque: Próprio vs Consignado */}
+          {/* Tipo de Veículo (Carro vs Moto) */}
+          <div>
+            <label className="text-xs font-bold text-zinc-300 block mb-2 uppercase tracking-wider">
+              Tipo de Veículo
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setVehicleType('carro')}
+                className={`p-3 rounded-xl border text-center transition-all cursor-pointer font-bold text-xs ${
+                  vehicleType === 'carro'
+                    ? 'bg-amber-500 text-black border-amber-400 shadow-lg shadow-amber-950/40'
+                    : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                🚗 Carro
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setVehicleType('moto');
+                  setBodyType('Moto');
+                }}
+                className={`p-3 rounded-xl border text-center transition-all cursor-pointer font-bold text-xs ${
+                  vehicleType === 'moto'
+                    ? 'bg-amber-500 text-black border-amber-400 shadow-lg shadow-amber-950/40'
+                    : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                🏍️ Moto
+              </button>
+            </div>
+          </div>
+
+          {/* Modalidade de Estoque: Próprio vs Consignado */}
           <div>
             <label className="text-xs font-bold text-zinc-300 block mb-2 uppercase tracking-wider">
               Modalidade de Estoque
@@ -349,7 +392,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                 </div>
                 <div>
                   <strong className="block text-xs font-bold">Estoque Próprio</strong>
-                  <span className="text-[10px] text-zinc-400">Veículo adquirido pela Dmotors</span>
+                  <span className="text-[10px] text-zinc-400">Veículo adquirido pela {CONTACT_INFO.brandName}</span>
                 </div>
               </button>
 
@@ -375,42 +418,36 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
             </div>
           </div>
 
-          {/* 2. Brand & Model (Chained) */}
+          {/* Brand & Model */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label htmlFor="modalBrandInput" className="text-xs font-semibold text-zinc-300 block mb-1">
                 Marca do Veículo *
               </label>
-              <select
+              <input
                 id="modalBrandInput"
+                type="text"
+                required
                 value={brand}
                 onChange={(e) => handleBrandChange(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
-              >
-                {BRAND_MODELS_CATALOG.map((b) => (
-                  <option key={b.brand} value={b.brand}>
-                    {b.brand}
-                  </option>
-                ))}
-              </select>
+                placeholder="Ex: Fiat, Honda, BMW, Ford"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+              />
             </div>
 
             <div>
               <label htmlFor="modalModelInput" className="text-xs font-semibold text-zinc-300 block mb-1">
-                Modelo (Nome do Carro) *
+                Modelo (Nome) *
               </label>
-              <select
+              <input
                 id="modalModelInput"
+                type="text"
+                required
                 value={model}
                 onChange={(e) => handleModelChange(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
-              >
-                {availableModels.map((m) => (
-                  <option key={m.name} value={m.name}>
-                    {m.name} ({m.bodyType})
-                  </option>
-                ))}
-              </select>
+                placeholder="Ex: Toro, CR-V, Focus, F 850 GS"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+              />
             </div>
           </div>
 
@@ -425,7 +462,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
               required
               value={version}
               onChange={(e) => setVersion(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
             />
           </div>
 
@@ -438,7 +475,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                 type="number"
                 value={yearFabrication}
                 onChange={(e) => setYearFabrication(Number(e.target.value))}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
               />
             </div>
             <div>
@@ -448,24 +485,24 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                 type="number"
                 value={yearModel}
                 onChange={(e) => setYearModel(Number(e.target.value))}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
               />
             </div>
             <div>
-              <label htmlFor="modalMileageInput" className="text-[11px] font-semibold text-zinc-300 block mb-1">KM Rodados</label>
+              <label htmlFor="modalMileageInput" className="text-[11px] font-semibold text-zinc-300 block mb-1">KM Rodados *</label>
               <input
                 id="modalMileageInput"
                 type="number"
                 value={mileage}
                 onChange={(e) => setMileage(Number(e.target.value))}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
               />
             </div>
           </div>
 
           {/* Financials & Margins */}
           <div className="p-4 bg-zinc-950/80 border border-zinc-800/90 rounded-xl space-y-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-red-400 block">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 block">
               Parâmetros Financeiros & Margem de Lucro
             </span>
 
@@ -479,7 +516,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                   type="number"
                   value={purchasePrice}
                   onChange={(e) => setPurchasePrice(Number(e.target.value))}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-red-500"
+                  className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-amber-500"
                 />
               </div>
 
@@ -493,7 +530,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                   required
                   value={price}
                   onChange={(e) => setPrice(Number(e.target.value))}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-red-500"
+                  className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-amber-500"
                 />
               </div>
 
@@ -506,9 +543,23 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                   type="number"
                   value={fipePrice}
                   onChange={(e) => setFipePrice(Number(e.target.value))}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-red-500"
+                  className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-amber-500"
                 />
               </div>
+            </div>
+
+            {/* Illustrative Price Toggle */}
+            <div className="pt-2 flex items-center gap-2">
+              <input
+                id="illustrativePriceCheckbox"
+                type="checkbox"
+                checked={isIllustrativePrice}
+                onChange={(e) => setIsIllustrativePrice(e.target.checked)}
+                className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+              />
+              <label htmlFor="illustrativePriceCheckbox" className="text-xs text-zinc-300 cursor-pointer">
+                Exibir selo <strong>"Preço ilustrativo"</strong> na vitrine pública (para veículos raros ou sob consulta)
+              </label>
             </div>
 
             {/* Real-time Margin Preview */}
@@ -536,7 +587,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                 type="text"
                 value={engine}
                 onChange={(e) => setEngine(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
               />
             </div>
             <div>
@@ -546,7 +597,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                 type="number"
                 value={powerCv}
                 onChange={(e) => setPowerCv(Number(e.target.value))}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
               />
             </div>
             <div>
@@ -555,12 +606,14 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                 id="bodyTypeInput"
                 value={bodyType}
                 onChange={(e) => setBodyType(e.target.value as any)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
               >
                 <option value="Sedan">Sedan</option>
                 <option value="SUV">SUV</option>
                 <option value="Hatchback">Hatchback</option>
                 <option value="Pickup">Pickup</option>
+                <option value="Coupe">Coupé</option>
+                <option value="Moto">Moto</option>
               </select>
             </div>
             <div>
@@ -571,7 +624,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                 maxLength={2}
                 value={plateEnd}
                 onChange={(e) => setPlateEnd(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white text-center font-mono focus:outline-none focus:border-red-500"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white text-center font-mono focus:outline-none focus:border-amber-500"
               />
             </div>
           </div>
@@ -584,7 +637,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                 type="text"
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
               />
             </div>
             <div>
@@ -593,7 +646,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                 id="transmissionInput"
                 value={transmission}
                 onChange={(e) => setTransmission(e.target.value as any)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
               >
                 <option value="Automático">Automático</option>
                 <option value="Dupla Embreagem">Dupla Embreagem (DSG/S-tronic)</option>
@@ -607,25 +660,25 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                 id="fuelInput"
                 value={fuel}
                 onChange={(e) => setFuel(e.target.value as any)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
               >
                 <option value="Gasolina">Gasolina</option>
                 <option value="Flex">Flex (Álcool/Gasolina)</option>
-                <option value="Híbrido">Híbrido</option>
                 <option value="Diesel">Diesel</option>
+                <option value="Híbrido">Híbrido</option>
                 <option value="Elétrico">Elétrico</option>
               </select>
             </div>
           </div>
 
           {/* Toggle Opportunity */}
-          <div className="p-3.5 bg-red-950/20 border border-red-800/40 rounded-xl flex items-center justify-between">
+          <div className="p-3.5 bg-amber-950/20 border border-amber-600/30 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Flame className="w-4 h-4 text-red-500" />
+              <Flame className="w-4 h-4 text-amber-400" />
               <div>
-                <strong className="text-xs text-white block">Marcar como Oportunidade Dmotors</strong>
+                <strong className="text-xs text-white block">Marcar como Oportunidade {CONTACT_INFO.brandName}</strong>
                 <span className="text-[11px] text-zinc-400">
-                  Destaque no topo da vitrine com selo de oferta da semana
+                  Destaque no topo da vitrine com selo de oferta exclusiva
                 </span>
               </div>
             </div>
@@ -633,23 +686,22 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
               type="checkbox"
               checked={isOpportunity}
               onChange={(e) => setIsOpportunity(e.target.checked)}
-              className="w-5 h-5 accent-red-600 rounded cursor-pointer"
+              className="w-5 h-5 accent-amber-500 rounded cursor-pointer"
             />
           </div>
 
-          {/* 3. COMPLETE PHOTO GALLERY MANAGEMENT & UPLOAD */}
+          {/* PHOTO GALLERY MANAGEMENT & UPLOAD */}
           <div className="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-3">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div>
                 <span className="text-xs font-bold text-white block">
-                  Galeria de Fotos do Veículo ({images.length} fotos)
+                  Galeria de Fotos ({images.length} fotos)
                 </span>
                 <span className="text-[11px] text-zinc-400">
-                  Faça upload do seu computador, print do Instagram ou cole links da internet
+                  Faça upload do seu dispositivo ou cole links da internet
                 </span>
               </div>
 
-              {/* Hidden file input */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -659,12 +711,11 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                 className="hidden"
               />
 
-              {/* Upload trigger button */}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-500 text-white flex items-center gap-1.5 transition-all shadow-md shadow-red-950 cursor-pointer disabled:opacity-50"
+                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-black flex items-center gap-1.5 transition-all shadow-md shadow-amber-950 cursor-pointer disabled:opacity-50"
               >
                 {isUploading ? (
                   <>
@@ -674,7 +725,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                 ) : (
                   <>
                     <Upload className="w-3.5 h-3.5" />
-                    Upload de Fotos do Computador
+                    Upload de Fotos
                   </>
                 )}
               </button>
@@ -695,7 +746,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                       handleAddUrl();
                     }
                   }}
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-red-500"
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
                 />
               </div>
               <button
@@ -709,7 +760,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
             </div>
 
             {uploadError && (
-              <p className="text-xs text-red-400 bg-red-950/40 p-2 rounded-lg border border-red-900">
+              <p className="text-xs text-rose-400 bg-rose-950/40 p-2 rounded-lg border border-rose-900">
                 {uploadError}
               </p>
             )}
@@ -722,7 +773,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                   <div
                     key={idx}
                     className={`relative rounded-xl overflow-hidden border bg-zinc-900 group aspect-[16/11] flex flex-col justify-between ${
-                      isPrimary ? 'border-emerald-500 ring-2 ring-emerald-500/30' : 'border-zinc-800'
+                      isPrimary ? 'border-amber-400 ring-2 ring-amber-400/30' : 'border-zinc-800'
                     }`}
                   >
                     <img
@@ -730,15 +781,15 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                       alt={`Foto ${idx + 1}`}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.currentTarget.src = 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1000&q=80';
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1000&q=80';
                       }}
                     />
 
                     {/* Badge */}
                     <div className="absolute top-1.5 left-1.5 z-10">
                       {isPrimary ? (
-                        <span className="flex items-center gap-1 bg-emerald-600 text-white text-[9px] font-bold uppercase px-1.5 py-0.5 rounded shadow">
-                          <Star className="w-2.5 h-2.5 fill-white" />
+                        <span className="flex items-center gap-1 bg-amber-500 text-black text-[9px] font-bold uppercase px-1.5 py-0.5 rounded shadow">
+                          <Star className="w-2.5 h-2.5 fill-black" />
                           Capa
                         </span>
                       ) : (
@@ -755,9 +806,9 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                           type="button"
                           onClick={() => handleSetPrimary(idx)}
                           title="Definir como Foto Principal de Capa"
-                          className="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1 shadow cursor-pointer"
+                          className="p-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-xs font-semibold flex items-center gap-1 shadow cursor-pointer font-bold"
                         >
-                          <Star className="w-3 h-3 fill-white" />
+                          <Star className="w-3 h-3 fill-black" />
                           <span className="text-[10px]">Capa</span>
                         </button>
                       )}
@@ -788,7 +839,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
                         type="button"
                         onClick={() => handleRemoveImage(idx)}
                         title="Remover foto"
-                        className="p-1.5 rounded-lg bg-red-600/80 hover:bg-red-600 text-white cursor-pointer"
+                        className="p-1.5 rounded-lg bg-rose-600/80 hover:bg-rose-600 text-white cursor-pointer"
                       >
                         <Trash2 className="w-3 h-3" />
                       </button>
@@ -809,7 +860,7 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-red-500"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
             />
           </div>
 
@@ -817,10 +868,10 @@ export const AddEditVehicleModal: React.FC<AddEditVehicleModalProps> = ({
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-red-600 hover:bg-red-500 text-white flex items-center justify-center gap-2 shadow-lg shadow-red-950 transition-all cursor-pointer"
+              className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black flex items-center justify-center gap-2 shadow-lg shadow-amber-950/50 transition-all cursor-pointer"
             >
-              <Save className="w-4 h-4" />
-              {isEditing ? 'Salvar Alterações no Veículo' : 'Adicionar ao Estoque da Dmotors'}
+              <Save className="w-4 h-4 text-black" />
+              {isEditing ? 'Salvar Alterações' : `Adicionar ao Estoque da ${CONTACT_INFO.brandName}`}
             </button>
           </div>
         </form>

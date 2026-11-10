@@ -5,7 +5,7 @@ import { StockManagement } from './StockManagement';
 import { LeadsCRM } from './LeadsCRM';
 import { AddEditVehicleModal } from './AddEditVehicleModal';
 import { MarkSoldModal } from './MarkSoldModal';
-import { BarChart3, Package, Users, Plus, ShieldCheck, Flame } from 'lucide-react';
+import { BarChart3, Package, Users, Plus, Info } from 'lucide-react';
 
 interface AdminViewProps {
   vehicles: Vehicle[];
@@ -42,7 +42,6 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
   const newLeadsCount = leads.filter((l) => l.status === 'novo').length;
   const availableCount = vehicles.filter((v) => v.status === 'available').length;
-  const soldCount = vehicles.filter((v) => v.status === 'sold').length;
 
   const handleOpenAdd = () => {
     setVehicleToEdit(null);
@@ -69,24 +68,32 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col">
+      {/* Discreet Demo Mode Banner */}
+      <div className="bg-amber-950/40 border-b border-amber-600/30 px-4 py-1.5 text-center text-[11px] text-amber-300 flex items-center justify-center gap-2">
+        <Info className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+        <span>
+          <strong>Modo demonstração:</strong> os dados e alterações ficam salvos apenas neste navegador (armazenamento local).
+        </span>
+      </div>
+
       {/* Admin Subheader & Navigation Tabs */}
-      <div className="border-b border-zinc-800 bg-zinc-900/60 sticky top-18 z-30 backdrop-blur-md">
+      <div className="border-b border-zinc-800 bg-zinc-900/80 sticky top-18 z-30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 gap-3">
             {/* Nav Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto">
+            <div className="flex items-center gap-2 overflow-x-auto">
               {/* 1. Gestão de Estoque (Default / First) */}
               <button
                 onClick={() => setActiveTab('stock')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === 'stock'
-                    ? 'bg-red-600 text-white shadow-md shadow-red-950/60'
+                    ? 'bg-amber-500 text-black shadow-md shadow-amber-950/60 font-black'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                 }`}
               >
                 <Package className="w-4 h-4" />
                 <span>Gestão de Estoque</span>
-                <span className="font-mono bg-zinc-950/60 px-1.5 py-0.2 rounded text-[11px]">
+                <span className={`font-mono px-1.5 py-0.2 rounded text-[11px] ${activeTab === 'stock' ? 'bg-black/20 text-black' : 'bg-zinc-950/60 text-zinc-300'}`}>
                   {availableCount}
                 </span>
               </button>
@@ -94,9 +101,9 @@ export const AdminView: React.FC<AdminViewProps> = ({
               {/* 2. BI & Performance 2026 */}
               <button
                 onClick={() => setActiveTab('bi')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === 'bi'
-                    ? 'bg-red-600 text-white shadow-md shadow-red-950/60'
+                    ? 'bg-amber-500 text-black shadow-md shadow-amber-950/60 font-black'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                 }`}
               >
@@ -107,16 +114,16 @@ export const AdminView: React.FC<AdminViewProps> = ({
               {/* 3. Leads & CRM */}
               <button
                 onClick={() => setActiveTab('crm')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === 'crm'
-                    ? 'bg-red-600 text-white shadow-md shadow-red-950/60'
+                    ? 'bg-amber-500 text-black shadow-md shadow-amber-950/60 font-black'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                 }`}
               >
                 <Users className="w-4 h-4" />
                 <span>Leads & CRM</span>
                 {newLeadsCount > 0 && (
-                  <span className="bg-red-500 text-white px-1.5 py-0.2 rounded-full font-bold text-[10px] animate-pulse">
+                  <span className="bg-amber-400 text-black px-1.5 py-0.2 rounded-full font-bold text-[10px]">
                     {newLeadsCount} novos
                   </span>
                 )}
@@ -127,10 +134,10 @@ export const AdminView: React.FC<AdminViewProps> = ({
             <div className="flex items-center gap-2">
               <button
                 onClick={handleOpenAdd}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 transition-colors flex items-center gap-1.5"
+                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black border border-amber-400/50 transition-colors flex items-center gap-1.5 shadow-md shadow-amber-950/40 cursor-pointer"
               >
-                <Plus className="w-3.5 h-3.5 text-emerald-400" />
-                Adicionar Carro
+                <Plus className="w-3.5 h-3.5 text-black" />
+                Cadastrar Veículo
               </button>
             </div>
           </div>

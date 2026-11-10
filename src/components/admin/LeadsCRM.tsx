@@ -4,15 +4,9 @@ import { formatBRL, formatDateBR } from '../../utils/formatters';
 import {
   Users,
   PhoneCall,
-  MessageSquare,
-  Calendar,
   Car,
-  DollarSign,
-  CheckCircle2,
-  Clock,
-  Send,
-  Sparkles
 } from 'lucide-react';
+import { CONTACT_INFO } from '../../config/contact';
 
 interface LeadsCRMProps {
   leads: LeadProposal[];
@@ -32,19 +26,19 @@ export const LeadsCRM: React.FC<LeadsCRMProps> = ({ leads, onUpdateLeadStatus })
     switch (status) {
       case 'novo':
         return (
-          <span className="bg-red-500/20 text-red-400 border border-red-500/40 px-2 py-0.5 rounded text-[10px] font-bold uppercase animate-pulse">
+          <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded text-[10px] font-bold uppercase animate-pulse">
             Novo Lead
           </span>
         );
       case 'em_atendimento':
         return (
-          <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded text-[10px] font-bold uppercase">
+          <span className="bg-blue-500/20 text-blue-300 border border-blue-500/40 px-2 py-0.5 rounded text-[10px] font-bold uppercase">
             Em Atendimento
           </span>
         );
       case 'visita_agendada':
         return (
-          <span className="bg-blue-500/20 text-blue-300 border border-blue-500/40 px-2 py-0.5 rounded text-[10px] font-bold uppercase">
+          <span className="bg-purple-500/20 text-purple-300 border border-purple-500/40 px-2 py-0.5 rounded text-[10px] font-bold uppercase">
             Visita Agendada
           </span>
         );
@@ -68,11 +62,11 @@ export const LeadsCRM: React.FC<LeadsCRMProps> = ({ leads, onUpdateLeadStatus })
       case 'financiamento':
         return 'Simulação de Financiamento';
       case 'test_drive':
-        return 'Agendamento de Test Drive';
+        return 'Agendamento de Visita';
       case 'troca':
-        return 'Proposta com Carro na Troca';
+        return 'Proposta com Veículo na Troca';
       case 'avaliacao_venda':
-        return 'Avaliação Venda seu Carro';
+        return 'Avaliação Venda seu Carro/Moto';
       case 'compra_imediata':
         return 'Compra Imediata à Vista';
       default:
@@ -86,7 +80,7 @@ export const LeadsCRM: React.FC<LeadsCRMProps> = ({ leads, onUpdateLeadStatus })
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
-            <Users className="w-5 h-5 text-red-500" />
+            <Users className="w-5 h-5 text-amber-400" />
             CRM de Leads & Propostas da Vitrine
           </h2>
           <p className="text-xs text-zinc-400 mt-0.5">
@@ -98,35 +92,35 @@ export const LeadsCRM: React.FC<LeadsCRMProps> = ({ leads, onUpdateLeadStatus })
         <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded-xl border border-zinc-800 text-xs">
           <button
             onClick={() => setFilterType('all')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-              filterType === 'all' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+              filterType === 'all' ? 'bg-amber-500 text-black font-bold' : 'text-zinc-400 hover:text-white'
             }`}
           >
             Todos ({leads.length})
           </button>
           <button
             onClick={() => setFilterType('financiamento')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-              filterType === 'financiamento' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+              filterType === 'financiamento' ? 'bg-amber-500 text-black font-bold' : 'text-zinc-400 hover:text-white'
             }`}
           >
             Financiamento
           </button>
           <button
             onClick={() => setFilterType('test_drive')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-              filterType === 'test_drive' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+              filterType === 'test_drive' ? 'bg-amber-500 text-black font-bold' : 'text-zinc-400 hover:text-white'
             }`}
           >
-            Test Drive
+            Visita
           </button>
           <button
             onClick={() => setFilterType('avaliacao_venda')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-              filterType === 'avaliacao_venda' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+              filterType === 'avaliacao_venda' ? 'bg-amber-500 text-black font-bold' : 'text-zinc-400 hover:text-white'
             }`}
           >
-            Venda seu Carro
+            Avaliação
           </button>
         </div>
       </div>
@@ -136,7 +130,7 @@ export const LeadsCRM: React.FC<LeadsCRMProps> = ({ leads, onUpdateLeadStatus })
         {filteredLeads.map((lead) => {
           const cleanPhone = lead.phone.replace(/\D/g, '');
           const whatsappUrl = `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(
-            `Olá, ${lead.customerName}! Aqui é da Dmotors (@_dmotors). Recebemos sua solicitação sobre ${
+            `Olá, ${lead.customerName}! Aqui é da ${CONTACT_INFO.brandName} (${CONTACT_INFO.brandHandle}). Recebemos sua solicitação sobre ${
               lead.vehicleName || 'a avaliação do seu veículo'
             }. Como podemos te atender melhor hoje?`
           )}`;
@@ -169,7 +163,7 @@ export const LeadsCRM: React.FC<LeadsCRMProps> = ({ leads, onUpdateLeadStatus })
                     id={`leadStatusSelect-${lead.id}`}
                     value={lead.status}
                     onChange={(e) => onUpdateLeadStatus(lead.id, e.target.value as LeadStatus)}
-                    className="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-red-500 cursor-pointer"
+                    className="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer"
                   >
                     <option value="novo">Novo</option>
                     <option value="em_atendimento">Em Atendimento</option>
@@ -215,7 +209,7 @@ export const LeadsCRM: React.FC<LeadsCRMProps> = ({ leads, onUpdateLeadStatus })
                 ) : lead.preferredDate ? (
                   <div>
                     <span className="text-zinc-500 block">Data de Visita Solicitada:</span>
-                    <strong className="text-red-400">{lead.preferredDate}</strong>
+                    <strong className="text-amber-400">{lead.preferredDate}</strong>
                   </div>
                 ) : (
                   <div>

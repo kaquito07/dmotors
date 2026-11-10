@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Vehicle } from '../../types/vehicle';
 import { formatBRL, formatKM, calculateInstallment } from '../../utils/formatters';
-import { ShieldCheck, Flame, ChevronLeft, ChevronRight, Gauge, Fuel, Calendar, ArrowRight, MessageSquareText } from 'lucide-react';
+import { Flame, ChevronLeft, ChevronRight, Gauge, Fuel, Calendar, ArrowRight, MessageSquareText, Sparkles } from 'lucide-react';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -13,7 +13,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelect, onO
   const [currentImgIdx, setCurrentImgIdx] = useState(0);
 
   const images = vehicle.images.length > 0 ? vehicle.images : [
-    'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=1200&q=80'
+    'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1000&q=80'
   ];
 
   const nextImage = (e: React.MouseEvent) => {
@@ -26,9 +26,9 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelect, onO
     setCurrentImgIdx((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  // Default simulation preview: 30% down payment, 48x
+  // Simulation preview: 30% down payment, 60x (up to 60x as requested)
   const downPaymentEstimate = Math.round(vehicle.price * 0.3);
-  const sim = calculateInstallment(vehicle.price, downPaymentEstimate, 48);
+  const sim = calculateInstallment(vehicle.price, downPaymentEstimate, 60);
 
   const isBelowFipe = vehicle.price < vehicle.fipePrice;
   const fipeDiff = vehicle.fipePrice - vehicle.price;
@@ -36,7 +36,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelect, onO
   return (
     <div
       onClick={() => onSelect(vehicle)}
-      className="group bg-zinc-900/90 rounded-2xl border border-zinc-800/90 hover:border-zinc-700 transition-all duration-300 hover:shadow-2xl hover:shadow-black/60 flex flex-col overflow-hidden cursor-pointer relative"
+      className="group bg-zinc-900/90 rounded-2xl border border-zinc-800/90 hover:border-amber-500/60 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-950/20 flex flex-col overflow-hidden cursor-pointer relative"
     >
       {/* Photo carousel container */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-950">
@@ -53,7 +53,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelect, onO
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-black/30 pointer-events-none" />
 
-        {/* Carousel controls - Visible on mobile (opacity-90) since mobile lacks hover! */}
+        {/* Carousel controls */}
         {images.length > 1 && (
           <>
             <button
@@ -77,7 +77,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelect, onO
                 <div
                   key={i}
                   className={`h-1.5 rounded-full transition-all ${
-                    i === currentImgIdx ? 'w-4 bg-white' : 'w-1.5 bg-white/40'
+                    i === currentImgIdx ? 'w-4 bg-amber-400' : 'w-1.5 bg-white/40'
                   }`}
                 />
               ))}
@@ -88,31 +88,30 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelect, onO
         {/* Top Badges */}
         <div className="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 right-2.5 sm:right-3 flex items-center justify-between z-10 pointer-events-none">
           {vehicle.isOpportunity ? (
-            <span className="flex items-center gap-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-red-600 text-white px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md shadow-md shadow-red-950">
-              <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-white" />
+            <span className="flex items-center gap-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-gradient-to-r from-amber-500 to-amber-600 text-black px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md shadow-md shadow-black/80">
+              <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-black" />
               Oportunidade
             </span>
           ) : (
-            <span className="text-[10px] sm:text-[11px] font-medium text-zinc-300 bg-zinc-900/80 backdrop-blur-sm px-2 py-0.5 rounded border border-zinc-700/60">
-              Estoque Selecionado
+            <span className="text-[10px] sm:text-[11px] font-medium text-zinc-300 bg-zinc-900/80 backdrop-blur-sm px-2 py-0.5 rounded border border-zinc-700/60 capitalize">
+              {vehicle.type}
             </span>
           )}
 
-          {vehicle.inspectionApproved && (
-            <span className="flex items-center gap-1 text-[10px] sm:text-[11px] font-medium text-emerald-400 bg-emerald-950/80 backdrop-blur-sm px-2 py-0.5 rounded border border-emerald-800/60">
-              <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-              Laudo 100%
+          {vehicle.isIllustrativePrice && (
+            <span className="text-[10px] sm:text-[11px] font-semibold text-amber-300 bg-black/80 backdrop-blur-sm px-2 py-0.5 rounded border border-amber-500/50">
+              Preço ilustrativo
             </span>
           )}
         </div>
       </div>
 
-      {/* Content Area - Optimized spacing on mobile */}
+      {/* Content Area */}
       <div className="p-3.5 sm:p-5 flex-1 flex flex-col justify-between">
         <div>
           {/* Brand & Model */}
           <div className="flex items-baseline justify-between gap-2">
-            <h3 className="text-base sm:text-lg font-bold text-white tracking-tight group-hover:text-red-400 transition-colors truncate">
+            <h3 className="text-base sm:text-lg font-bold text-white tracking-tight group-hover:text-amber-400 transition-colors truncate">
               {vehicle.brand} <span className="font-extrabold">{vehicle.model}</span>
             </h3>
             <span className="text-[11px] sm:text-xs font-mono text-zinc-400 shrink-0">
@@ -125,17 +124,17 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelect, onO
             {vehicle.version}
           </p>
 
-          {/* Quick specs grid */}
-          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 py-2.5 sm:py-3 my-2.5 sm:my-3 border-y border-zinc-800/80 text-[11px] sm:text-xs text-zinc-300">
-            <div className="flex items-center gap-1 truncate">
+          {/* Quick specs grid with ALWAYS HIGHLIGHTED MILEAGE */}
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 py-2.5 sm:py-3 my-2.5 sm:my-3 border-y border-zinc-800/80 text-[11px] sm:text-xs">
+            <div className="flex items-center gap-1 text-amber-300 font-bold truncate bg-amber-950/40 px-1.5 py-0.5 rounded border border-amber-600/30">
+              <Gauge className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <span className="truncate">{formatKM(vehicle.mileage)}</span>
+            </div>
+            <div className="flex items-center gap-1 text-zinc-300 truncate justify-center">
               <Calendar className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
               <span className="truncate">{vehicle.yearFabrication}/{vehicle.yearModel}</span>
             </div>
-            <div className="flex items-center gap-1 truncate">
-              <Gauge className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
-              <span className="truncate">{formatKM(vehicle.mileage)}</span>
-            </div>
-            <div className="flex items-center gap-1 truncate">
+            <div className="flex items-center gap-1 text-zinc-300 truncate justify-end">
               <Fuel className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
               <span className="truncate">{vehicle.fuel}</span>
             </div>
@@ -160,10 +159,10 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelect, onO
             </span>
           </div>
 
-          {/* Monthly financing snippet */}
+          {/* Monthly financing snippet in up to 60x */}
           <div className="mt-2 text-[10px] sm:text-[11px] text-zinc-400 flex items-center justify-between bg-zinc-950/60 p-2 rounded-lg border border-zinc-800/60">
-            <span>Simulação: Ent. + 48x</span>
-            <strong className="text-zinc-200 font-mono">
+            <span>Simulação: Ent. + 60x</span>
+            <strong className="text-amber-300 font-mono">
               {formatBRL(sim.monthlyInstallment)}/mês
             </strong>
           </div>
@@ -175,16 +174,16 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelect, onO
                 e.stopPropagation();
                 onOpenSimulate(vehicle);
               }}
-              className="min-h-[42px] py-2.5 px-3 text-xs font-semibold rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700/60 transition-colors flex items-center justify-center gap-1.5"
+              className="min-h-[42px] py-2.5 px-3 text-xs font-semibold rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700/60 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <MessageSquareText className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>Simular</span>
             </button>
             <button
               onClick={() => onSelect(vehicle)}
-              className="min-h-[42px] py-2.5 px-3 text-xs font-semibold rounded-xl bg-red-600 hover:bg-red-500 text-white transition-colors flex items-center justify-center gap-1 shadow-sm"
+              className="min-h-[42px] py-2.5 px-3 text-xs font-bold rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black transition-colors flex items-center justify-center gap-1 shadow-md shadow-amber-950/40 cursor-pointer"
             >
-              <span>Ver Carro</span>
+              <span>Ver Detalhes</span>
               <ArrowRight className="w-3.5 h-3.5 shrink-0" />
             </button>
           </div>

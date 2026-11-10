@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, Sparkles, CheckCircle2, PhoneCall, Car, DollarSign } from 'lucide-react';
+import { X, Sparkles, CheckCircle2, Car, DollarSign } from 'lucide-react';
 import { LeadProposal } from '../../types/vehicle';
+import { CONTACT_INFO } from '../../config/contact';
 
 interface SellYourCarModalProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export const SellYourCarModal: React.FC<SellYourCarModalProps> = ({
   const [customerName, setCustomerName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [vehicleType, setVehicleType] = useState<'carro' | 'moto'>('carro');
   const [carBrand, setCarBrand] = useState('');
   const [carModel, setCarModel] = useState('');
   const [carYear, setCarYear] = useState('');
@@ -30,7 +32,7 @@ export const SellYourCarModal: React.FC<SellYourCarModalProps> = ({
     e.preventDefault();
     if (!customerName || !phone || !carModel) return;
 
-    const summaryDetails = `${carBrand} ${carModel} Ano ${carYear || 'N/I'}, ${carKm ? `${carKm} km` : ''}. Valor pretendido: ${desiredPrice || 'A combinar'}. Obs: ${notes || 'Nenhuma'}`;
+    const summaryDetails = `[${vehicleType.toUpperCase()}] ${carBrand} ${carModel} Ano ${carYear || 'N/I'}, ${carKm ? `${carKm} km` : ''}. Valor pretendido: ${desiredPrice || 'A combinar'}. Obs: ${notes || 'Nenhuma'}`;
 
     onSubmitLead({
       customerName,
@@ -58,13 +60,13 @@ export const SellYourCarModal: React.FC<SellYourCarModalProps> = ({
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">Venda ou Troque com a Dmotors</h3>
-              <p className="text-xs text-zinc-400">Avaliação justa, pagamento à vista e sem burocracia</p>
+              <h3 className="text-base font-bold text-white">Venda ou Troque com a {CONTACT_INFO.brandName}</h3>
+              <p className="text-xs text-zinc-400">Avaliação ágil, pagamento seguro e sem burocracia</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-zinc-400 hover:text-white rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
+            className="p-1.5 text-zinc-400 hover:text-white rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -78,7 +80,7 @@ export const SellYourCarModal: React.FC<SellYourCarModalProps> = ({
               </div>
               <h4 className="text-lg font-bold text-white">Dados Recebidos com Sucesso!</h4>
               <p className="text-xs text-zinc-300 max-w-sm mx-auto">
-                Nossos avaliadores entrarão em contato via WhatsApp nas próximas 2 horas com uma proposta preliminar.
+                A equipe {CONTACT_INFO.brandName} entrará em contato via WhatsApp com uma proposta justa para seu veículo.
               </p>
             </div>
           ) : (
@@ -86,7 +88,7 @@ export const SellYourCarModal: React.FC<SellYourCarModalProps> = ({
               <div className="bg-zinc-950/60 p-3 rounded-xl border border-zinc-800 text-xs text-zinc-300 flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>
-                  Pagamos via <strong>TED/PIX imediato</strong> após laudo cautelar aprovado em nossa oficina.
+                  Pagamento via <strong>TED/PIX imediato</strong> na unidade {CONTACT_INFO.cityState} após vistoria.
                 </span>
               </div>
 
@@ -116,14 +118,43 @@ export const SellYourCarModal: React.FC<SellYourCarModalProps> = ({
                 </div>
               </div>
 
-              {/* Car details */}
+              {/* Vehicle Type selector */}
+              <div>
+                <label className="text-[11px] font-semibold text-zinc-400 block mb-1">Tipo de Veículo</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setVehicleType('carro')}
+                    className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                      vehicleType === 'carro'
+                        ? 'bg-amber-500/20 text-amber-300 border-amber-500'
+                        : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-white'
+                    }`}
+                  >
+                    🚗 Carro
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setVehicleType('moto')}
+                    className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                      vehicleType === 'moto'
+                        ? 'bg-amber-500/20 text-amber-300 border-amber-500'
+                        : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-white'
+                    }`}
+                  >
+                    🏍️ Moto
+                  </button>
+                </div>
+              </div>
+
+              {/* Vehicle details */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-semibold text-zinc-400 block mb-1">Marca</label>
                   <input
                     type="text"
                     required
-                    placeholder="Ex: BMW, Audi, VW, Jeep"
+                    placeholder="Ex: Fiat, Honda, BMW, Ford"
                     value={carBrand}
                     onChange={(e) => setCarBrand(e.target.value)}
                     className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
@@ -134,7 +165,7 @@ export const SellYourCarModal: React.FC<SellYourCarModalProps> = ({
                   <input
                     type="text"
                     required
-                    placeholder="Ex: 320i M Sport ou Golf GTI"
+                    placeholder="Ex: Toro Volcano ou CR-V EX"
                     value={carModel}
                     onChange={(e) => setCarModel(e.target.value)}
                     className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
@@ -147,7 +178,7 @@ export const SellYourCarModal: React.FC<SellYourCarModalProps> = ({
                   <label className="text-[11px] font-semibold text-zinc-400 block mb-1">Ano</label>
                   <input
                     type="text"
-                    placeholder="Ex: 2022"
+                    placeholder="Ex: 2021"
                     value={carYear}
                     onChange={(e) => setCarYear(e.target.value)}
                     className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
@@ -157,7 +188,7 @@ export const SellYourCarModal: React.FC<SellYourCarModalProps> = ({
                   <label className="text-[11px] font-semibold text-zinc-400 block mb-1">KM Atual</label>
                   <input
                     type="text"
-                    placeholder="Ex: 35.000"
+                    placeholder="Ex: 45.000"
                     value={carKm}
                     onChange={(e) => setCarKm(e.target.value)}
                     className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
@@ -167,7 +198,7 @@ export const SellYourCarModal: React.FC<SellYourCarModalProps> = ({
                   <label className="text-[11px] font-semibold text-zinc-400 block mb-1">Valor Desejado (R$)</label>
                   <input
                     type="text"
-                    placeholder="Ex: 150.000"
+                    placeholder="Ex: 85.000"
                     value={desiredPrice}
                     onChange={(e) => setDesiredPrice(e.target.value)}
                     className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
@@ -179,7 +210,7 @@ export const SellYourCarModal: React.FC<SellYourCarModalProps> = ({
                 <label className="text-[11px] font-semibold text-zinc-400 block mb-1">Observações ou Opcionais</label>
                 <textarea
                   rows={2}
-                  placeholder="Ex: Teto solar, revisões na concessionária, laudo cautelar já feito..."
+                  placeholder="Ex: Único dono, manual, chave reserva, revisado recentemente..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
@@ -189,10 +220,10 @@ export const SellYourCarModal: React.FC<SellYourCarModalProps> = ({
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-amber-500 hover:bg-amber-400 text-black flex items-center justify-center gap-1.5 transition-all shadow-md shadow-amber-950"
+                  className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black flex items-center justify-center gap-1.5 transition-all shadow-md shadow-amber-950/50 cursor-pointer"
                 >
                   <Car className="w-4 h-4" />
-                  Solicitar Avaliação Gratuita Dmotors
+                  Solicitar Avaliação Gratuita {CONTACT_INFO.brandName}
                 </button>
               </div>
             </form>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Vehicle } from '../../types/vehicle';
 import { formatBRL, calculateDaysInStock } from '../../utils/formatters';
-import { X, CheckCircle2, DollarSign, Calendar, User, Tag, Sparkles } from 'lucide-react';
+import { X, CheckCircle2, DollarSign, Calendar, User } from 'lucide-react';
+import { CONTACT_INFO } from '../../config/contact';
 
 interface MarkSoldModalProps {
   vehicle: Vehicle | null;
@@ -41,7 +42,7 @@ export const MarkSoldModal: React.FC<MarkSoldModalProps> = ({
       vehicleId: vehicle.id,
       salePrice,
       soldDate,
-      buyerName: buyerName || 'Cliente Dmotors',
+      buyerName: buyerName || `Cliente ${CONTACT_INFO.brandName}`,
       saleChannel,
     });
     onClose();
@@ -65,7 +66,7 @@ export const MarkSoldModal: React.FC<MarkSoldModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-zinc-400 hover:text-white rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
+            className="p-1.5 text-zinc-400 hover:text-white rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -76,7 +77,7 @@ export const MarkSoldModal: React.FC<MarkSoldModalProps> = ({
           {/* Financial summary banner */}
           <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-2">
             <div className="flex items-center justify-between text-xs text-zinc-400">
-              <span>Custo de Aquisição (Compra):</span>
+              <span>Custo de Aquisição / Repasse:</span>
               <strong className="text-zinc-200 font-mono">{formatBRL(vehicle.purchasePrice)}</strong>
             </div>
 
@@ -164,7 +165,7 @@ export const MarkSoldModal: React.FC<MarkSoldModalProps> = ({
               className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500"
             >
               <option value="Instagram @_dmotors">Instagram Oficial @_dmotors</option>
-              <option value="Loja Física">Loja Física / Showroom Jardins</option>
+              <option value="Loja Física">Loja Física / Showroom {CONTACT_INFO.city}</option>
               <option value="Webmotors">Portal Webmotors</option>
               <option value="Indicação">Indicação de Cliente Satisfeito</option>
               <option value="WhatsApp Direto">WhatsApp Direto Showroom</option>
@@ -174,7 +175,7 @@ export const MarkSoldModal: React.FC<MarkSoldModalProps> = ({
           <div className="pt-3">
             <button
               type="submit"
-              className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center gap-2 shadow-lg shadow-emerald-950 transition-all"
+              className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center gap-2 shadow-lg shadow-emerald-950 transition-all cursor-pointer"
             >
               <CheckCircle2 className="w-4 h-4" />
               Confirmar Venda e Atualizar BI Instantaneamente
